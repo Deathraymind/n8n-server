@@ -2,18 +2,19 @@
 
 {
   imports = [
-    # Import the agenix module locally to caddy.nix
     (builtins.fetchTarball {
-      url = "https://github.com/ryantm/agenix/archive/refs/heads/master.tar.gz";
+      url = "https://github.com/ryantm/agenix/archive/refs/tags/v0.14.0.tar.gz";
     } + "/modules/age.nix")
   ];
-environment.systemPackages = with pkgs; [
-    agenix
+
+  environment.systemPackages = with pkgs; [
+    (pkgs.callPackage (builtins.fetchTarball {
+      url = "https://github.com/ryantm/agenix/archive/refs/tags/v0.14.0.tar.gz";
+    }) { })
   ];
 
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
-  # Secure secret with agenix (defined here)
   age.secrets.cloudflare.file = ../../secrets/cloudflare.age;
 
   security.acme = {
