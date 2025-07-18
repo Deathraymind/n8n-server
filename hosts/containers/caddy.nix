@@ -1,6 +1,8 @@
 { pkgs, config, ... }:
 {
   networking.firewall.allowedTCPPorts = [ 80 443 ];
+  
+  age.secrets.cloudflare.file = ../../secrets/cloudflare.age;
 
   security.acme = {
   acceptTerms = true;
