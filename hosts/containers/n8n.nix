@@ -9,7 +9,6 @@
         autoStart = true;
         ports = [ "5678:5678" ];
         volumes = [
-            "/var/lib/n8n:/home/node/.n8n"  
         ];
         environment = {
           ENV_VAR = "value";
