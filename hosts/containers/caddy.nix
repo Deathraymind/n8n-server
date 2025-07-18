@@ -27,7 +27,7 @@
     enable = true;
 
     virtualHosts."n8n.deathraymind.net".extraConfig = ''
-      reverse_proxy http://localhost:5678
+      reverse_proxy http://192.168.1.202:5678
 
       tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
         protocols tls1.3
