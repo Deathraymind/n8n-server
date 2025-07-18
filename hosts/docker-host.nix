@@ -4,6 +4,7 @@
   imports = [
     ./containers/n8n.nix
     ./containers/caddy.nix
+    ./containers/jellyfin.nix
 
   ];
   services.openssh.enable = true; 
