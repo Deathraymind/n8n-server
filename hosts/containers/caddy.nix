@@ -9,7 +9,6 @@
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
   # Use agenix for the Cloudflare token
-  age.secrets.cloudflare.file = ../../secrets/cloudflare.age;
 
   security.acme = {
     acceptTerms = true;
@@ -20,7 +19,7 @@
       domain = "deathraymind.net";
       extraDomainNames = [ "*.deathraymind.net" ];
       dnsProvider = "cloudflare";
-      environmentFile = config.age.secrets.cloudflare.path;
+      environmentFile = ./../../secrets/cloudflare.env;  
     };
   };
 
