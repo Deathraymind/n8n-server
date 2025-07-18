@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
 {
+  services.openssh.enable = true; 
   virtualisation.docker = {
   enable = true;
   # Set up resource limits

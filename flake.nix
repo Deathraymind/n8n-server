@@ -12,6 +12,7 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/docker-host.nix
+          /etc/nixos/configuration.nix
         ];
       };
     };
