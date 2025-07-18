@@ -1,20 +1,14 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, agenix, ... }:
 
 {
-  imports = [
-    (builtins.fetchTarball {
-      url = "https://github.com/ryantm/agenix/archive/refs/tags/v0.14.0.tar.gz";
-    } + "/modules/age.nix")
-  ];
-
+  # Install agenix CLI
   environment.systemPackages = with pkgs; [
-    (pkgs.callPackage (builtins.fetchTarball {
-      url = "https://github.com/ryantm/agenix/archive/refs/tags/v0.14.0.tar.gz";
-    }) { })
+    agenix.packages.${pkgs.system}.default
   ];
 
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
+  # Use agenix for the Cloudflare token
   age.secrets.cloudflare.file = ../../secrets/cloudflare.age;
 
   security.acme = {
@@ -42,4 +36,5 @@
     '';
   };
 }
+
 
