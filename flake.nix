@@ -7,13 +7,14 @@
     agenix.url = "github:ryantm/agenix";
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
+  outputs = { self, nixpkgs, flake-utils, agenix, ... }:
     {
       nixosConfigurations.docker-host = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ./hosts/docker-host.nix
           /etc/nixos/configuration.nix
+            agenix.nixosModules.default
         ];
       };
     };
