@@ -18,5 +18,7 @@
       };
     };
   };
+    allowedTCPPorts = [ 5678 ]; 
+    allowedUDPPorts = [ 5678 ];
 }
 
