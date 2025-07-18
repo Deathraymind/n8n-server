@@ -4,9 +4,6 @@
 services.jellyfin = {
     enable = true;
     openFirewall = true;
-    extraPackages = with pkgs; [
-    intel-media-driver
-  ];
   }; 
 hardware.opengl = {
   enable = true;
