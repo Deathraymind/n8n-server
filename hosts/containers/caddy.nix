@@ -33,6 +33,14 @@
         protocols tls1.3
       }
     '';
+    virtualHosts."jellyfin.deathraymind.net".extraConfig = ''
+      reverse_proxy http://192.168.1.202:8096:
+
+      tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
+        protocols tls1.3
+      }
+    '';
+
   };
 }
 
