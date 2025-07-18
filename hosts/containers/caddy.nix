@@ -7,6 +7,9 @@
       url = "https://github.com/ryantm/agenix/archive/refs/heads/master.tar.gz";
     } + "/modules/age.nix")
   ];
+environment.systemPackages = with pkgs; [
+    agenix
+  ];
 
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
