@@ -1,9 +1,16 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
+  imports = [
+    # Import the agenix module locally to caddy.nix
+    (builtins.fetchTarball {
+      url = "https://github.com/ryantm/agenix/archive/refs/heads/master.tar.gz";
+    } + "/modules/age.nix")
+  ];
+
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
-  # Secure secret with agenix
+  # Secure secret with agenix (defined here)
   age.secrets.cloudflare.file = ../../secrets/cloudflare.age;
 
   security.acme = {
@@ -11,7 +18,7 @@
     defaults.email = "deathraymind@gmail.com";
 
     certs."deathraymind.net" = {
-      group = "caddy"; # Use fixed group to avoid race condition
+      group = "caddy";
       domain = "deathraymind.net";
       extraDomainNames = [ "*.deathraymind.net" ];
       dnsProvider = "cloudflare";
@@ -31,5 +38,4 @@
     '';
   };
 }
-
 
