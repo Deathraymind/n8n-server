@@ -3,6 +3,7 @@
 {
   imports = [
     ./containers/n8n.nix
+    ./containers/caddy.nix
 
   ];
   services.openssh.enable = true; 
