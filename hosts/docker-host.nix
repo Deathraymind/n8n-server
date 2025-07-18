@@ -1,6 +1,10 @@
 { config, pkgs, ... }:
 
 {
+  imports = [
+    ./containers/n8n.nix
+
+  ];
   services.openssh.enable = true; 
   virtualisation.docker = {
   enable = true;
