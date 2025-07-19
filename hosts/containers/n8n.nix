@@ -16,7 +16,7 @@
         ports = [ "5678:5678" ];
         volumes = [ "/var/lib/n8n:/home/node/.n8n" ];
         environment = {
-          ENV_VAR = "test";
+         N8N_WEBHOOK_URL = "https://n8n.deathraymind.net/"; 
         };
       };
     };
