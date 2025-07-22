@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
 {
+  time.timeZone = "Asia/Tokyo";
   imports = [
     ./containers/n8n.nix
     ./containers/caddy.nix
@@ -29,7 +30,8 @@
 
   environment.systemPackages = with pkgs; [
     docker
-    docker-compose
+    docker-compose 
+    git
   ];
 
   networking.firewall.allowedTCPPorts = [ 2375 ]; # Optional: expose Docker API (insecure!)
