@@ -6,6 +6,8 @@
     ./containers/n8n.nix
     ./containers/caddy.nix
     ./containers/jellyfin.nix
+    ./containers/zep.nix
+
 
   ];
   services.openssh.enable = true; 
