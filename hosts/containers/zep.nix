@@ -11,6 +11,7 @@
         autoStart = true;
         ports = [ "8000:8000" ];
         volumes = [
+            "/var/lib/zep:/var/lib/zep"
         ];
         environment = {
           # Add Zep-specific environment variables here if needed
