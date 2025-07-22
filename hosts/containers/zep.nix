@@ -2,9 +2,6 @@
 
 {
   # Ensure the persistent data directory for Zep exists and has the right permissions
-  systemd.tmpfiles.rules = [
-    "d /var/lib/zep 0755 1000 1000 - -"
-  ];
 
   virtualisation.oci-containers = {
     backend = "docker";
@@ -17,7 +14,6 @@
         ];
         environment = {
           # Add Zep-specific environment variables here if needed
-          ZEP_CONFIG_FILE = "/app/zep.yaml";
           TZ = "Asia/Tokyo";
         };
       };
