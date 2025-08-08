@@ -13,6 +13,7 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/docker-host.nix
+          ./hosts/services/postgress/postgress.nix
           /etc/nixos/configuration.nix
           agenix.nixosModules.default
         ];
