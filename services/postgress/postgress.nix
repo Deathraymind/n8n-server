@@ -1,12 +1,13 @@
 { config, pkgs, ... }:
 
 {
-  config.services.postgresql = {
+  services.postgresql = {
     enable = true;
     ensureDatabases = [ "mydatabase" ];
-    authentication = pkgs.lib.mkOverride 10 ''
-      #type database  DBuser  auth-method
-      local all       all     trust
-    '';
+    authentication = pkgs.lib.mkOverride 10 [
+      # type  database  user   auth-method
+      { type = "local"; database = "all"; user = "all"; method = "trust"; }
+    ];
   };
 }
+
