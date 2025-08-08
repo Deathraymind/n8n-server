@@ -3,6 +3,7 @@
 {
   config.services.postgresql = {
     enable = true;
+     enableTCPIP = true;
     ensureDatabases = [ "mydatabase" ];
     authentication = pkgs.lib.mkOverride 10 ''
       #type database  DBuser  auth-method
