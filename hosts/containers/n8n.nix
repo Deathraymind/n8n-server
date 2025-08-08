@@ -17,6 +17,7 @@
         volumes = [ "/var/lib/n8n:/home/node/.n8n" ];
         environment = {
          N8N_WEBHOOK_URL = "https://n8n.deathraymind.net/";
+         WEBHOOK_URL="https://n8n.deathraymind.net";
          N8N_EDITOR_BASE_URL = "https://n8n.deathraymind.net/";
          GENERIC_TIMEZONE= "Asia/Tokyo";
         };
