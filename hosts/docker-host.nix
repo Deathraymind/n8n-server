@@ -7,6 +7,7 @@
     ./containers/caddy.nix
     ./containers/jellyfin.nix
     ./containers/zep.nix
+    ./containers/homarr.nix
 
 
   ];
