@@ -8,7 +8,7 @@
 
  virtualisation.oci-containers = {
   backend = "docker";
-  containers.n8n = {
+  containers.homarr = {
     image = "ghcr.io/homarr-labs/homarr:latest";        # or pin a version/digest
     autoStart = true;
     ports = [ "7575:7575" ];
