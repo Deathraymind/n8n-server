@@ -16,6 +16,7 @@
     extraOptions = [ "--pull=always" ]; # re-pull on restart
     environment = {
       GENERIC_TIMEZONE = "Asia/Tokyo";
+      SECRET_ENCRYPTION_KEY= "0ba047cac10f692396f5d15e76958bb84a6ca240fd686bb9ff1de87b6f6a130f";
       # optional: TZ = "Asia/Tokyo";
     };
   };
