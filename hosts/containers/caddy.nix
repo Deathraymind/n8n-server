@@ -49,10 +49,6 @@
     '';
     virtualHosts."panel.deathraymind.net".extraConfig = ''
       reverse_proxy http://192.168.1.135:80
-
-      tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
-        protocols tls1.3
-      }
     '';
     virtualHosts."nodejp.deathraymind.net".extraConfig = ''
       reverse_proxy http://192.168.1.135:8080
