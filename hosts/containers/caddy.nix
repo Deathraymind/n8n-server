@@ -27,21 +27,21 @@
     enable = true;
 
     virtualHosts."n8n.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.202:5678
+      reverse_proxy http://192.168.1.203:5678
 
       tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
         protocols tls1.3
       }
     '';
     virtualHosts."jellyfin.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.202:8096
+      reverse_proxy http://192.168.1.203:8096
 
       tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
         protocols tls1.3
       }
     '';
     virtualHosts."homarr.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.202:7575
+      reverse_proxy http://192.168.1.203:7575
 
       tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
         protocols tls1.3
