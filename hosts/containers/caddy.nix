@@ -48,14 +48,16 @@
       }
     '';
  virtualHosts."panel.deathraymind.net".extraConfig = ''
-  # Panel frontend
-  reverse_proxy / http://192.168.1.135:80 {
-      transport http { versions h2c 1.1 }
-  }
-
   # WebSocket / API requests to Wings
   handle_path /api/servers/* {
       reverse_proxy http://192.168.1.135:8080 {
+          transport http { versions h2c 1.1 }
+      }
+  }
+
+  # Panel frontend
+  handle_path / {
+      reverse_proxy http://192.168.1.135:80 {
           transport http { versions h2c 1.1 }
       }
   }
