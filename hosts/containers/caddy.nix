@@ -54,23 +54,12 @@
         protocols tls1.3
       }
     '';
-    
-
-virtualHosts."nodejp.deathraymind.net".extraConfig = ''
-  reverse_proxy http://192.168.1.135:8080 {
-      transport http {
-          versions h2c 1.1
-      }
-      header_up Host {host}
-      header_up X-Real-IP {remote_host}
-      header_up X-Forwarded-For {remote_host}
-      header_up X-Forwarded-Port {server_port}
-      header_up X-Forwarded-Proto {scheme}
-  }
-  tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
-      protocols tls1.3
-  }
-'';
+        #virtualHosts."nodejp.deathraymind.net".extraConfig = ''
+        #reverse_proxy http://192.168.1.135:8080
+        #tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
+        #protocols tls1.3
+        #}
+        #'';
 
 
 
