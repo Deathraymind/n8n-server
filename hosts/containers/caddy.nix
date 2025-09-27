@@ -47,26 +47,29 @@
         protocols tls1.3
       }
     '';
- virtualHosts."panel.deathraymind.net".extraConfig = ''
-  # WebSocket / API requests to Wings
-  handle_path /api/servers/* {
-      reverse_proxy http://192.168.1.135:8080 {
-          transport http { versions h2c 1.1 }
-      }
-  }
+    virtualHosts."panel.deathraymind.net".extraConfig = ''
+    @websockets {
+      header Connection *Upgrade*
+      header Upgrade    websocket
+    }
 
-  # Panel frontend
-  handle_path / {
-      reverse_proxy http://192.168.1.135:80 {
-          transport http { versions h2c 1.1 }
+    reverse_proxy @websockets http://192.168.1.135:8080 {
+      transport http {
+        versions h2c 1.1
       }
-  }
+    }
 
-  tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
+    reverse_proxy / http://192.168.1.135:80 {
+      transport http {
+        versions h2c 1.1
+      }
+    }
+
+    tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
       protocols tls1.3
-  }
-'';
- 
+    }
+  '';
+
     virtualHosts."nodejp.deathraymind.net".extraConfig = ''
       reverse_proxy http://192.168.1.135:8080
       tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
