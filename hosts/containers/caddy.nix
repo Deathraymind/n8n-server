@@ -55,7 +55,7 @@
       }
     '';
     virtualHosts."nodejp.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.135:8080
+      reverse_proxy https://192.168.1.135:8080
 
     '';
 
