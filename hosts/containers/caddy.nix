@@ -54,11 +54,6 @@
         protocols tls1.3
       }
     '';
-        virtualHosts."nodejp.deathraymind.net".extraConfig = ''
-        reverse_proxy http://192.168.1.135:8080
-        '';
-
-
 
   };
 }
