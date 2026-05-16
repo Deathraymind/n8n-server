@@ -8,10 +8,10 @@
 
     # 1. Disable DHCP so the IP doesn't change automatically
     useDHCP = false;
-    interfaces.enp3s0.useDHCP = false; # Replace enp3s0 with your interface
+    interfaces.ens18.useDHCP = false; # Replace enp3s0 with your interface
 
     # 2. Assign your static IP address
-    interfaces.enp3s0.ipv4.addresses = [
+    interfaces.ens18.ipv4.addresses = [
       {
         address = "192.168.1.135";
         prefixLength = 24; # This matches a standard 255.255.255.0 subnet
