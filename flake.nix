@@ -29,7 +29,6 @@
       system = "x86_64-linux";
       modules = [
         ./hosts/pelican/caddy-host.nix
-        ./services/postgress/postgress.nix
         ./hosts/pelican/configuration.nix
         agenix.nixosModules.default
       ];
