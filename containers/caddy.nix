@@ -57,5 +57,14 @@
         protocols tls1.3
       }
     '';
+    virtualHosts."node1.deathraymind.net".extraConfig = ''
+      # Proxy to the new Wings VM on port 8080
+      reverse_proxy http://192.168.1.136:8080
+
+      # Use your existing working wildcard certificates
+      tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
+        protocols tls1.3
+      }
+    '';
   };
 }

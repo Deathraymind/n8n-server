@@ -41,27 +41,27 @@
   ];
 
   # --- PELICAN PANEL ---
-  services.pelican.panel = {
-    enable = true;
-    app.url = "https://panel.deathraymind.com";
-    app.keyFile = "/var/secrets/pelican/app.key";
-    database.passwordFile = "/var/secrets/pelican/dbpassword";
-    redis.passwordFile = "/var/secrets/pelican/redispassword";
-    mail.passwordFile = "/var/secrets/pelican/mailpassword";
-  };
+  #services.pelican.panel = {
+  #enable = true;
+  #app.url = "https://panel.deathraymind.com";
+  #app.keyFile = "/var/secrets/pelican/app.key";
+  #database.passwordFile = "/var/secrets/pelican/dbpassword";
+  #redis.passwordFile = "/var/secrets/pelican/redispassword";
+  #mail.passwordFile = "/var/secrets/pelican/mailpassword";
+  # };
 
   # --- PELICAN WINGS (Cleanly commented out so it doesn't break syntax) ---
-  # services.pelican.wings = {
-  #   enable = true;
-  #   openFirewall = true;
-  #   uuid = "your-node-uuid";
-  #   remote = "https://panel.deathraymind.com";
-  #   tokenIdFile = "/home/deathraymind/secrets/token_id";
-  #   tokenFile = "/home/deathraymind/secrets/token";
-  #   api.ssl.enable = true;
-  #   api.ssl.certFile = "/home/deathraymind/secrets/cert";
-  #   api.ssl.keyFile = "/home/deathraymind/secrets/key";
-  # };
+  services.pelican.wings = {
+    enable = true;
+    openFirewall = true;
+    uuid = "your-node-uuid";
+    remote = "https://panel.deathraymind.com";
+    tokenIdFile = "/home/deathraymind/secrets/token_id";
+    tokenFile = "/home/deathraymind/secrets/token";
+    api.ssl.enable = true;
+    api.ssl.certFile = "/home/deathraymind/secrets/cert";
+    api.ssl.keyFile = "/home/deathraymind/secrets/key";
+  };
 
   # --- SYSTEM BACKENDS & CONFIG ---
   virtualisation.docker.enable = true;
