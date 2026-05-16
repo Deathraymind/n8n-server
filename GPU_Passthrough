@@ -1,0 +1,69 @@
+Passing a GPU through to a virtual machine (VM) in Proxmox VE for AI workloads 
+
+    Access your Proxmox host shell via the web GUI or SSH.
+
+    Open the GRUB configuration file:
+    Bash
+
+    nano /etc/default/grub
+
+    Find the line that starts with GRUB_CMDLINE_LINUX_DEFAULT. You need to add intel_iommu=on or amd_iommu=on depending on your CPU.
+
+        For Intel CPUs:
+        Plaintext
+
+        GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on"
+
+        For AMD CPUs:
+        Plaintext
+
+        GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on"
+
+    Save and exit (Ctrl+O, Enter, Ctrl+X).
+
+    Update GRUB to apply changes:
+    Bash
+
+    update-grub
+
+    Reboot your Proxmox server.
+
+Step 2: Load Necessary Kernel Modules
+
+Next, Proxmox needs to load the modules required for PCIe passthrough.
+
+    Open the modules file:
+    Bash
+
+    nano /etc/modules
+
+    Paste the following lines into the file:
+    Plaintext
+
+    vfio
+    vfio_iommu_type1
+    vfio_pci
+    vfio_virqfd
+
+    Save and exit, then run this command to refresh the configuration:
+    Bash
+
+    update-initramfs -u -k all
+
+Step 3: Block Proxmox from Using the GPU (Blacklist Drivers)
+
+If Proxmox tries to use the GPU for itself, it won't let the VM claim it. We need to tell the host to ignore the GPU drivers.
+
+    Open the modprobe blacklist file:
+    Bash
+
+    nano /etc/modprobe.d/blacklist.conf
+
+    Add the following lines (adjust if you are using an AMD GPU, but assuming Nvidia for AI):
+    Plaintext
+
+    blacklist nouveau
+    blacklist nvidia
+    blacklist nvidia_drm
+
+    Save, exit, and reboot the Proxmox host one more time.
