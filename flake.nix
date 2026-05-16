@@ -21,6 +21,7 @@
         ./hosts/caddy/caddy-host.nix
         ./services/postgress/postgress.nix
         ./hosts/caddy/configuration.nix
+        ./hosts/pelican/hardware-configuration.nix
         agenix.nixosModules.default
       ];
       specialArgs = {inherit agenix;};
