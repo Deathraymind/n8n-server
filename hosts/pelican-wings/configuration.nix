@@ -55,12 +55,12 @@
     enable = true;
     openFirewall = true;
     uuid = "your-node-uuid";
-    remote = "https://panel.deathraymind.com";
+    remote = "https://panel.deathraymind.net";
     tokenIdFile = "/home/deathraymind/secrets/token_id";
     tokenFile = "/home/deathraymind/secrets/token";
-    api.ssl.enable = true;
-    api.ssl.certFile = "/home/deathraymind/secrets/cert";
-    api.ssl.keyFile = "/home/deathraymind/secrets/key";
+    api.ssl.enable = false;
+    # api.ssl.certFile = "/home/deathraymind/secrets/cert";
+    # api.ssl.keyFile = "/home/deathraymind/secrets/key";
   };
 
   # --- SYSTEM BACKENDS & CONFIG ---

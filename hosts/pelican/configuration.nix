@@ -43,7 +43,7 @@
   # --- PELICAN PANEL ---
   services.pelican.panel = {
     enable = true;
-    app.url = "https://panel.deathraymind.com";
+    app.url = "https://panel.deathraymind.net";
     app.keyFile = "/var/secrets/pelican/app.key";
     database.passwordFile = "/var/secrets/pelican/dbpassword";
     redis.passwordFile = "/var/secrets/pelican/redispassword";
