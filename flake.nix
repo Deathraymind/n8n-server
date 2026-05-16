@@ -30,7 +30,8 @@
       modules = [
         inputs.pelican.nixosModules.default
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
-        ./hosts/pelican/caddy-host.nix
+        ./hosts/pelican/pelican-host.nix
+        ./hosts/pelican/hardware.nix
         ./hosts/pelican/configuration.nix
         agenix.nixosModules.default
       ];
