@@ -3,6 +3,7 @@
   # --- NETWORKING CONFIGURATION ---
   # Enable NetworkManager to handle DHCP for IPv4 and IPv6 automatically
   networking.networkmanager.enable = true;
+  systemd.services.systemd-networkd-wait-online.enable = false;
 
   # Optional: You can explicitly trust DHCP settings globally
   networking.useDHCP = pkgs.lib.mkDefault true;

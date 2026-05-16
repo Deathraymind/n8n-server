@@ -1,10 +1,29 @@
 {pkgs, ...}: {
-  networking.hostName = "pelican";
   boot.loader.grub.enable = false;
   # --- NETWORKING CONFIGURATION ---
   networking.networkmanager.enable = true;
-  networking.useDHCP = pkgs.lib.mkDefault true;
+  systemd.services.systemd-networkd-wait-online.enable = false;
+  networking = {
+    hostName = "Game-Server"; # Keeps your hostname
 
+    # 1. Disable DHCP so the IP doesn't change automatically
+    useDHCP = false;
+    interfaces.enp3s0.useDHCP = false; # Replace enp3s0 with your interface
+
+    # 2. Assign your static IP address
+    interfaces.enp3s0.ipv4.addresses = [
+      {
+        address = "192.168.1.135";
+        prefixLength = 24; # This matches a standard 255.255.255.0 subnet
+      }
+    ];
+
+    # 3. Set your Gateway (usually your router's IP)
+    defaultGateway = "192.168.1.1";
+
+    # 4. Set DNS servers (using Google and Cloudflare here)
+    nameservers = ["1.1.1.1" "8.8.8.8"];
+  };
   # --- VIRTUALIZATION & ACCESS ---
   services.qemuGuest.enable = true;
   services.openssh.enable = true;
