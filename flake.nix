@@ -14,12 +14,12 @@
     agenix,
     ...
   }: {
-    nixosConfigurations.docker-host = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.caddy = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        ./hosts/docker-host.nix
+        ./hosts/caddy/caddy-host.nix
         ./services/postgress/postgress.nix
-        ./hosts/configuration.nix
+        ./hosts/caddy/configuration.nix
         agenix.nixosModules.default
       ];
       specialArgs = {inherit agenix;};
