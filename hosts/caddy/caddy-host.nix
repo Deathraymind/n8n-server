@@ -5,7 +5,7 @@
 }: {
   time.timeZone = "Asia/Tokyo";
   imports = [
-    ./containers/caddy.nix
+    ../../containers/caddy.nix
   ];
   services.openssh.enable = true;
   virtualisation.docker = {
