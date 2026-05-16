@@ -19,7 +19,7 @@
       modules = [
         ./hosts/docker-host.nix
         ./services/postgress/postgress.nix
-        ./hosts/docker-host/configuration.nix
+        ./hosts/configuration.nix
         agenix.nixosModules.default
       ];
       specialArgs = {inherit agenix;};
