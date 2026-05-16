@@ -22,7 +22,7 @@
       domain = "deathraymind.net";
       extraDomainNames = ["*.deathraymind.net"];
       dnsProvider = "cloudflare";
-      environmentFile = ./../secrets/cloudflare.env;
+      environmentFile = "/var/secrets/cloudflare.env";
     };
   };
 

@@ -21,22 +21,41 @@
         ./hosts/caddy/caddy-host.nix
         ./services/postgress/postgress.nix
         ./hosts/caddy/configuration.nix
-        ./hosts/pelican/hardware-configuration.nix
         agenix.nixosModules.default
+
+        # Proxmox specific configuration (Replaced hardware-configuration.nix)
+        ({modulesPath, ...}: {
+          imports = [(modulesPath + "/virtualisation/proxmox-image.nix")];
+          virtualisation.diskSize = 20480; # 20 GB initial image size
+          services.qemuGuest.enable = true;
+          boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
+          networking.hostName = "caddy";
+          nix.settings.trusted-users = ["root" "deathraymind"];
+        })
       ];
-      specialArgs = {inherit agenix;};
+      specialArgs = {inherit agenix inputs;};
     };
+
     nixosConfigurations.pelican = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         inputs.pelican.nixosModules.default
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
         ./hosts/pelican/pelican-host.nix
-        ./hosts/pelican/hardware-configuration.nix
         ./hosts/pelican/configuration.nix
         agenix.nixosModules.default
+
+        # Proxmox specific configuration (Replaced hardware-configuration.nix)
+        ({modulesPath, ...}: {
+          imports = [(modulesPath + "/virtualisation/proxmox-image.nix")];
+          virtualisation.diskSize = 20480; # 20 GB initial image size
+          services.qemuGuest.enable = true;
+          boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
+          networking.hostName = "pelican";
+          nix.settings.trusted-users = ["root" "deathraymind"];
+        })
       ];
-      specialArgs = {inherit agenix;};
+      specialArgs = {inherit agenix inputs;};
     };
   };
 }

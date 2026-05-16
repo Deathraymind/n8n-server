@@ -1,29 +1,19 @@
-{pkgs, ...}: {
-  boot.loader.grub.enable = false;
+{
+  pkgs,
+  lib,
+  ...
+}: {
+  boot.loader.grub.enable = true;
   # --- NETWORKING CONFIGURATION ---
+  networking.hostName = "Game-Server";
+
+  # Explicitly turn off NetworkManager if you want to use systemd-networkd
   networking.networkmanager.enable = true;
-  systemd.services.systemd-networkd-wait-online.enable = false;
-  networking = {
-    hostName = "Game-Server"; # Keeps your hostname
+  networking.useDHCP = pkgs.lib.mkDefault true;
 
-    # 1. Disable DHCP so the IP doesn't change automatically
-    useDHCP = false;
-    interfaces.ens18.useDHCP = false; # Replace enp3s0 with your interface
+  # Enable systemd-networkd for reliable static IP management
+  systemd.services.systemd-networkd-wait-online.enable = lib.mkForce false;
 
-    # 2. Assign your static IP address
-    interfaces.ens18.ipv4.addresses = [
-      {
-        address = "192.168.1.135";
-        prefixLength = 24; # This matches a standard 255.255.255.0 subnet
-      }
-    ];
-
-    # 3. Set your Gateway (usually your router's IP)
-    defaultGateway = "192.168.1.1";
-
-    # 4. Set DNS servers (using Google and Cloudflare here)
-    nameservers = ["1.1.1.1" "8.8.8.8"];
-  };
   # --- VIRTUALIZATION & ACCESS ---
   services.qemuGuest.enable = true;
   services.openssh.enable = true;
@@ -33,10 +23,10 @@
   users.users.deathraymind = {
     isNormalUser = true;
     description = "Primary User";
-    extraGroups = ["networkmanager" "wheel"]; # 'wheel' enables sudo
+    extraGroups = ["wheel"]; # 'wheel' enables sudo
 
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5..." # <-- Your public SSH key
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII1p2OamHpIwYUh0mS3yj/CDmT01n4leoYCd/tuqMJHt deathraymind@gmail.com" # <-- Your public SSH key
     ];
 
     hashedPassword = "$6$X6ADCAYJr36.atJY$aOzF6Drf0YEq2ac3QnFFU3bhJZNuY/hX9Fux6dcJCeiQTNBK1F3oFKqqlhpUoKVJA34gfIWs0VkcO1051jn5d0";
