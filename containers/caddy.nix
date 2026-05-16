@@ -1,12 +1,15 @@
-{ config, pkgs, agenix, ... }:
-
 {
+  config,
+  pkgs,
+  agenix,
+  ...
+}: {
   # Install agenix CLI
   environment.systemPackages = with pkgs; [
     agenix.packages.${pkgs.system}.default
   ];
 
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedTCPPorts = [80 443];
 
   # Use agenix for the Cloudflare token
 
@@ -17,9 +20,9 @@
     certs."deathraymind.net" = {
       group = "caddy";
       domain = "deathraymind.net";
-      extraDomainNames = [ "*.deathraymind.net" ];
+      extraDomainNames = ["*.deathraymind.net"];
       dnsProvider = "cloudflare";
-      environmentFile = ./../../secrets/cloudflare.env;  
+      environmentFile = ./../secrets/cloudflare.env;
     };
   };
 
@@ -54,8 +57,5 @@
         protocols tls1.3
       }
     '';
-
   };
 }
-
-
