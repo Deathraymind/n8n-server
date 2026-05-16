@@ -5,6 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     agenix.url = "github:ryantm/agenix";
+    pelican.url = "github:Hythera/nix-pelican";
   };
 
   outputs = {
@@ -20,6 +21,16 @@
         ./hosts/caddy/caddy-host.nix
         ./services/postgress/postgress.nix
         ./hosts/caddy/configuration.nix
+        agenix.nixosModules.default
+      ];
+      specialArgs = {inherit agenix;};
+    };
+    nixosConfigurations.pelican = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/pelican/caddy-host.nix
+        ./services/postgress/postgress.nix
+        ./hosts/pelican/configuration.nix
         agenix.nixosModules.default
       ];
       specialArgs = {inherit agenix;};
