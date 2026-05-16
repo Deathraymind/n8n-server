@@ -14,7 +14,7 @@
     flake-utils,
     agenix,
     ...
-  }: {
+  } @ inputs: {
     nixosConfigurations.caddy = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -28,6 +28,8 @@
     nixosConfigurations.pelican = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
+        inputs.pelican.nixosModules.default
+        {nixpkgs.overlays = [inputs.pelican.overlays.default];}
         ./hosts/pelican/caddy-host.nix
         ./hosts/pelican/configuration.nix
         agenix.nixosModules.default
