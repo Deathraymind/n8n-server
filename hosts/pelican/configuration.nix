@@ -1,65 +1,61 @@
 {pkgs, ...}: {
-  networking.hostName = "caddy-vm";
+  networking.hostName = "pelican";
+
   # --- NETWORKING CONFIGURATION ---
-  # Enable NetworkManager to handle DHCP for IPv4 and IPv6 automatically
   networking.networkmanager.enable = true;
-
-  # Optional: You can explicitly trust DHCP settings globally
   networking.useDHCP = pkgs.lib.mkDefault true;
-  # Enable Proxmox Guest Agent so the Proxmox UI can see the VM's IP address
-  services.qemuGuest.enable = true;
-  # Enable SSH service
-  services.openssh.enable = true;
 
-  # Define your user and inject your SSH public key for instant access
+  # --- VIRTUALIZATION & ACCESS ---
+  services.qemuGuest.enable = true;
+  services.openssh.enable = true;
+  services.openssh.settings.PasswordAuthentication = true;
+
+  # --- USER CONFIGURATION ---
   users.users.deathraymind = {
     isNormalUser = true;
     description = "Primary User";
     extraGroups = ["networkmanager" "wheel"]; # 'wheel' enables sudo
 
-    # Put your SSH key here so you can log in without a password
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5..." # <-- Your public SSH key
     ];
 
-    # 2. Set an initial password (hashed for security)
-    # This sets the password to "password123" as an example.
-    # You can generate your own hash by running: mkpasswd -m sha-512
     hashedPassword = "$6$X6ADCAYJr36.atJY$aOzF6Drf0YEq2ac3QnFFU3bhJZNuY/hX9Fux6dcJCeiQTNBK1F3oFKqqlhpUoKVJA34gfIWs0VkcO1051jn5d0";
   };
-  services.openssh.settings.PasswordAuthentication = true;
-  # System packages
+
+  # --- SYSTEM PACKAGES ---
   environment.systemPackages = with pkgs; [
     git
     vim
     curl
     htop
   ];
+
+  # --- PELICAN PANEL ---
   services.pelican.panel = {
     enable = true;
-    app.url = "https://panel.example.com";
-    app.keyFile = "/path/to/app.key"; # Generate with: openssl rand -base64 32
-    database.passwordFile = "/path/to/db/password";
-    redis.passwordFile = "/path/to/redis/password";
-    mail.passwordFile = "/path/to/mail/password";
+    app.url = "https://panel.deathraymind.com";
+    app.keyFile = "/var/secrets/pelican/app.key";
+    database.passwordFile = "/var/secrets/pelican/dbpassword";
+    redis.passwordFile = "/var/secrets/pelican/redispassword";
+    mail.passwordFile = "/var/secrets/pelican/mailpassword";
   };
 
-  # 2. The Backend (Wings)
-  services.pelican.wings = {
-    enable = true;
-    openFirewall = true;
-    uuid = "your-node-uuid";
-    remote = "https://panel.example.com";
-    tokenIdFile = "/path/to/token/id";
-    tokenFile = "/path/to/token";
-    api.ssl.enable = true;
-    api.ssl.certFile = "/path/to/cert";
-    api.ssl.keyFile = "/path/to/key";
-  };
+  # --- PELICAN WINGS (Cleanly commented out so it doesn't break syntax) ---
+  # services.pelican.wings = {
+  #   enable = true;
+  #   openFirewall = true;
+  #   uuid = "your-node-uuid";
+  #   remote = "https://panel.deathraymind.com";
+  #   tokenIdFile = "/home/deathraymind/secrets/token_id";
+  #   tokenFile = "/home/deathraymind/secrets/token";
+  #   api.ssl.enable = true;
+  #   api.ssl.certFile = "/home/deathraymind/secrets/cert";
+  #   api.ssl.keyFile = "/home/deathraymind/secrets/key";
+  # };
 
-  # 3. Enable Docker (Required for Wings)
+  # --- SYSTEM BACKENDS & CONFIG ---
   virtualisation.docker.enable = true;
-
   nixpkgs.config.allowUnfree = true;
   system.stateVersion = "25.05";
 }
