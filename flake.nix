@@ -32,7 +32,7 @@
         inputs.pelican.nixosModules.default
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
         ./hosts/pelican/pelican-host.nix
-        ./hosts/pelican/hardware.nix
+        ./hosts/pelican/hardware-configuration.nix
         ./hosts/pelican/configuration.nix
         agenix.nixosModules.default
       ];
