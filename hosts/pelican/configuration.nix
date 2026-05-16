@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   networking.hostName = "pelican";
-
+  boot.loader.grub.enable = false;
   # --- NETWORKING CONFIGURATION ---
   networking.networkmanager.enable = true;
   networking.useDHCP = pkgs.lib.mkDefault true;
