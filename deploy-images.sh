@@ -9,8 +9,9 @@ STORAGE_POOL="NVME_Fast_Storage"
 # --- VM CONFIGURATION ARRAY ---
 HOSTS=(
    #"caddy:100:Caddy-ReverseProxy:4096:+100G"
-   "pelican:101:Pelican-Backend:4096:+150G"
-   "pelican-wings:102:Pelican-Wings:4096:+50G"
+   #"pelican:101:Pelican-Backend:4096:+150G"
+  # "pelican-wings:102:Pelican-Wings:4096:+50G"
+   "nas:105:Nix-Nas:4096:+50G"
 )
 
 # --- EXECUTION ---

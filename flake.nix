@@ -35,6 +35,25 @@
       ];
       specialArgs = {inherit agenix inputs;};
     };
+    nixosConfigurations.nas = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/nas/nas-host.nix
+        ./hosts/nas/configuration.nix
+        agenix.nixosModules.default
+
+        # Proxmox specific configuration (Replaced hardware-configuration.nix)
+        ({modulesPath, ...}: {
+          imports = [(modulesPath + "/virtualisation/proxmox-image.nix")];
+          virtualisation.diskSize = 20480; # 20 GB initial image size
+          services.qemuGuest.enable = true;
+          boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
+          networking.hostName = "nix-nas";
+          nix.settings.trusted-users = ["root" "deathraymind"];
+        })
+      ];
+      specialArgs = {inherit agenix inputs;};
+    };
 
     nixosConfigurations.pelican = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
