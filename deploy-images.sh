@@ -4,13 +4,13 @@ set -e # Exit immediately if any command fails
 # --- GLOBAL CONFIGURATION ---
 PROXMOX_IP="192.168.1.144"
 PROXMOX_USER="root"
-STORAGE_POOL="nvme"
+STORAGE_POOL="NVME_Fast_Storage"
 
 # --- VM CONFIGURATION ARRAY ---
 HOSTS=(
-   #"caddy:160:Caddy-ReverseProxy:4096:+100G"
-   "pelican:161:Pelican-Backend:4096:+150G"
-  # "pelican-wings:162:Pelican-Wings:4096:+50G"
+   #"caddy:100:Caddy-ReverseProxy:4096:+100G"
+   "pelican:101:Pelican-Backend:4096:+150G"
+   "pelican-wings:102:Pelican-Wings:4096:+50G"
 )
 
 # --- EXECUTION ---
