@@ -2,7 +2,6 @@
   networking.hostName = "caddy-vm";
   # --- NETWORKING CONFIGURATION ---
   boot.loader.grub.enable = true;
-  boot.loader.grub.device = "nodev";
   # Enable NetworkManager to handle DHCP for IPv4 and IPv6 automatically
   networking.networkmanager.enable = true;
   systemd.services.systemd-networkd-wait-online.enable = pkgs.lib.mkForce false;

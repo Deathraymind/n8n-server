@@ -8,7 +8,11 @@
   environment.systemPackages = with pkgs; [
     agenix.packages.${pkgs.system}.default
   ];
-
+  # 1. Enable Cloud-Init so it listens to Proxmox
+  services.cloud-init.enable = true;
+  services.cloud-init.network.enable = true;
+  # 2. Prevent ACME from racing ahead before Cloud-Init finishes writing the file
+  systemd.services.caddy.after = ["acme-deathraymind.net.service"];
   networking.firewall.allowedTCPPorts = [80 443];
 
   # Use agenix for the Cloudflare token
@@ -25,38 +29,37 @@
       environmentFile = "/var/secrets/cloudflare.env";
     };
   };
-
   services.caddy = {
     enable = true;
 
-    virtualHosts."n8n.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.203:5678
+    virtualHosts."n8n.deathraymind.net" = {
+      useACMEHost = "deathraymind.net"; # This automatically configures permissions and links the certs!
+      extraConfig = ''
+        reverse_proxy http://192.168.1.203:5678
+      '';
+    };
 
-      tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
-        protocols tls1.3
-      }
-    '';
-    virtualHosts."jellyfin.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.203:8096
+    virtualHosts."jellyfin.deathraymind.net" = {
+      useACMEHost = "deathraymind.net";
+      extraConfig = ''
+        reverse_proxy http://192.168.1.203:8096
+      '';
+    };
 
-      tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
-        protocols tls1.3
-      }
-    '';
-    virtualHosts."homarr.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.203:7575
+    virtualHosts."homarr.deathraymind.net" = {
+      useACMEHost = "deathraymind.net";
+      extraConfig = ''
+        reverse_proxy http://192.168.1.7575
+      '';
+    };
 
-      tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
-        protocols tls1.3
-      }
-    '';
-    virtualHosts."panel.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.135:80
+    virtualHosts."panel.deathraymind.net" = {
+      useACMEHost = "deathraymind.net";
+      extraConfig = ''
+        reverse_proxy http://192.168.1.135:80
+      '';
+    };
 
-      tls /var/lib/acme/deathraymind.net/cert.pem /var/lib/acme/deathraymind.net/key.pem {
-        protocols tls1.3
-      }
-    '';
     virtualHosts."node1.deathraymind.net".extraConfig = ''
       # Proxy to the new Wings VM on port 8080
       reverse_proxy http://192.168.1.136:8080

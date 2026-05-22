@@ -62,7 +62,7 @@
       modules = [
         inputs.pelican.nixosModules.default
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
-        ./hosts/pelican-wings/pelican-host.nix
+        ./hosts/pelican-wings/pelican-wings.nix
         ./hosts/pelican-wings/configuration.nix
         agenix.nixosModules.default
 
