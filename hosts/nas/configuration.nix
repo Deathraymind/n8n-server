@@ -48,6 +48,7 @@
     configDir = "/home/deathraymind/.config/syncthing";
   };
   # journalctl -u filebrowser.service | grep 'admin' run this to get the password
+
   # --- AUTOMATIC DIRECTORY, PERMISSIONS, & THEME SETUP ---
   systemd.tmpfiles.rules = [
     "d /var/lib/filebrowser 0750 deathraymind users - -"
@@ -57,6 +58,28 @@
     # Declaratively downloads the theme file from GitHub and puts it exactly where FileBrowser needs it
     "L+ /var/lib/filebrowser/branding/custom.css - - - - ${./filebrowser-theme.css}"
   ];
+  # --- SYNCTHING VELLUM THEME ---
+  system.activationScripts.syncthing-vellum-theme = let
+    # Points directly to the local folder in your flake repository
+    vellum-theme-src = ./syncthing-themes;
+    targetDir = "/home/deathraymind/.config/syncthing/gui";
+  in {
+    text = ''
+      # 1. Purge old links
+      rm -rf "${targetDir}/vellum-light" "${targetDir}/vellum-dark"
+
+      # 2. Make clean parent directories
+      mkdir -p "${targetDir}/vellum-light"
+      mkdir -p "${targetDir}/vellum-dark"
+
+      # 3. Symlink the assets from the local flake storage (via the Nix store)
+      ln -sfn "${vellum-theme-src}/vellum-light/assets" "${targetDir}/vellum-light/assets"
+      ln -sfn "${vellum-theme-src}/vellum-dark/assets" "${targetDir}/vellum-dark/assets"
+
+      # 4. Correct ownership
+      chown -R deathraymind:users "${targetDir}/../"
+    '';
+  };
 
   services.openssh.settings.PasswordAuthentication = true;
   # System packages

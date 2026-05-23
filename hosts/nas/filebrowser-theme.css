@@ -33,6 +33,26 @@
     --grey: #525252;
     --dark-grey: rgba(82, 82, 82, 0.15);
     --moon-grey: #f2f4f8;
+
+    --surfaceElevated: #2c2c2c;
+    --surfaceOverlay: #1f1f1f;
+    --surfaceAccent: #393939;
+
+    --focus: var(--focus);
+
+    --green: #42be65;
+    --green-light: #6fdc8c;
+
+    --overlay-dark: var(--overlay-dark);
+    --overlay-light: var(--overlay-light);
+
+    --preview-bg: var(--preview-bg);
+    --preview-bg-blur: var(--preview-bg-blur);
+
+    --selection-bg: #393939;
+    --shell-bg: #2c2c2c;
+
+    --hover-blue: rgba(120, 169, 255, 0.12);
 }
 
 
@@ -49,8 +69,8 @@
     width: 100%;
     padding: 1em;
     cursor: pointer;
-    background: #2c313c;
-    color: white;
+    background: #262626; /* Adjusted to Oxocarbon's secondary surface tone */
+    color: var(--textPrimary); /* Swapped hardcoded white for theme primary text */
     font-size: 1.3em;
 }
 
@@ -66,9 +86,9 @@ h1.share__box__title {
 .card#share ul li select {
     padding: 0.2em;
     margin-right: 0.5em;
-    border: 1px solid #21252b;
+    border: 1px solid #353535; /* Swapped out the old blue-gray border for Oxocarbon hover/border gray */
     background-color: var(--background);
-    color: white;
+    color: var(--textPrimary);
 }
 
 .share__box {
@@ -87,11 +107,8 @@ h1 {
 }
 
 .message {
-    color: white;
+    color: var(--textPrimary); /* Using theme variable to respect the clean light gray text */
 }
-
-
-
 /* ############### MAIN THEME ############### */
 
 body {
@@ -123,7 +140,7 @@ i.material-icons {
 }
 
 .overlay {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: var(--overlay-dark);
 }
 
 /* Mosaic view style */
@@ -217,7 +234,7 @@ header {
     }
 
     header .overlay {
-        background-color: rgba(0, 0, 0, 0.3);
+        background-color: var(--overlay-light);
     }
 
     #dropdown .action span:not(.counter) {
@@ -381,7 +398,7 @@ nav .action {
 }
 
 .action:hover {
-    background-color: rgba(142, 178, 255, 0.15) !important;
+    background-color: var(--hover-blue) !important;
 }
 
 
@@ -396,8 +413,8 @@ input,
 input:focus,
 .input:focus {
     border-color: transparent;
-    -webkit-box-shadow: 0 0 0 2px #5f6373;
-    box-shadow: 0 0 0 2px #5f6373;
+    -webkit-box-shadow: 0 0 0 2px var(--focus);
+    box-shadow: 0 0 0 2px var(--focus);
 }
 
 #search #input input:focus {
@@ -407,19 +424,19 @@ input:focus,
 
 .input--green {
     border-color: transparent;
-    -webkit-box-shadow: 0 0 0 2px #147A41;
-    box-shadow: 0 0 0 2px #147A41;
+    -webkit-box-shadow: 0 0 0 2px var(--green);
+    box-shadow: 0 0 0 2px var(--green);
 }
 
 .input--green:focus {
-    -webkit-box-shadow: 0 0 0 2px #84c77d;
-    box-shadow: 0 0 0 2px #84c77d;
+    -webkit-box-shadow: 0 0 0 2px var(--green-light);
+    box-shadow: 0 0 0 2px var(--green-light);
 }
 
 
 /* Multiple selection style */
 #listing #multiple-selection {
-    background-color: #2B354B;
+    background-color: var(--surfaceAccent);
     border-radius: var(--radius);
     margin: 0 1em 1em 1em;
     padding: 0.5em 0.7em 0.5em 1em;
@@ -439,7 +456,7 @@ input:focus,
 
 /* Shell style */
 .shell {
-    background-color: #30364c;
+    background-color: var(--shell-bg);
     border-radius: var(--radius);
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -459,7 +476,7 @@ input:focus,
     #file-selection {
         -webkit-box-shadow: none;
         box-shadow: none;
-        background-color: #30364C !important;
+        background-color: var(--shell-bg) !important;
         border-radius: var(--radius);
         padding: 0.5em 1em;
         max-width: 22em;
@@ -496,19 +513,19 @@ input:focus,
 
 /* File preview style */
 #previewer {
-    background-color: rgba(8, 9, 12, 0.9);
+    background-color: var(--preview-bg);
 }
 
 @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
     #previewer {
         -webkit-backdrop-filter: blur(3px);
         backdrop-filter: blur(3px);
-        background-color: rgba(8, 9, 12, 0.8) !important;
+        background-color: var(--preview-bg-blur) !important;
     }
 }
 
 #previewer>button {
-    background-color: rgba(142, 178, 255, 0.15);
+    background-color: var(--hover-blue);
     border-radius: var(--radius);
 }
 
@@ -523,7 +540,7 @@ input:focus,
 }
 
 #previewer .preview .info .button:hover {
-    background-color: rgba(142, 178, 255, 0.15);
+    background-color: var(--hover-blue);
 }
 
 #previewer .preview .info .title i {
@@ -655,8 +672,8 @@ input:focus,
 }
 
 #search.active input:focus {
-    -webkit-box-shadow: 0 0 0 2px #5f6373 !important;
-    box-shadow: 0 0 0 2px #5f6373 !important;
+    -webkit-box-shadow: 0 0 0 2px var(--focus) !important;
+    box-shadow: 0 0 0 2px var(--focus) !important;
 }
 
 #dropdown .action:hover {
@@ -703,7 +720,7 @@ input:focus,
 }
 
 .dashboard #nav ul li:hover {
-    background-color: rgba(146, 154, 201, 0.1);
+    background-color: var(--hover-blue);
 }
 
 .dashboard #nav ul li.active {
@@ -728,7 +745,7 @@ input:focus,
 }
 
 .card .collapsible:hover {
-    background-color: rgba(142, 178, 255, 0.15) !important;
+    background-color: var(--hover-blue) !important;
 }
 
 .collapsible {
