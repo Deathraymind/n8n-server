@@ -1,68 +1,85 @@
 {pkgs, ...}: {
+  imports = [
+    ./homepage.nix
+  ];
+
+  # --- SYSTEM & NETWORKING CONFIGURATION ---
   networking.hostName = "nix-nas";
-  # --- NETWORKING CONFIGURATION ---
   boot.loader.grub.enable = true;
   networking.networkmanager.enable = true;
   systemd.services.systemd-networkd-wait-online.enable = pkgs.lib.mkForce false;
-
-  # Optional: You can explicitly trust DHCP settings globally
   networking.useDHCP = pkgs.lib.mkDefault true;
-  # Enable Proxmox Guest Agent so the Proxmox UI can see the VM's IP address
+
+  # Firewall Rules
+  networking.firewall.allowedTCPPorts = [80 443 3000 8080 8081 8384];
+
+  # Virtualization & Remote Access
   services.qemuGuest.enable = true;
-  # Enable SSH service
-  networking.firewall.allowedTCPPorts = [8080 8384];
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    settings.PasswordAuthentication = true;
+  };
+
+  # --- USER CONFIGURATION ---
   users.users.deathraymind = {
     isNormalUser = true;
     description = "Primary User";
-    extraGroups = ["wheel"];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII1p2OamHpIwYUh0mS3yj/CDmT01n4leoYCd/tuqMJHt deathraymind@gmail.com" # <-- Your public SSH key
-    ];
-
+    extraGroups = ["wheel" "nextcloud"];
     hashedPassword = "$6$X6ADCAYJr36.atJY$aOzF6Drf0YEq2ac3QnFFU3bhJZNuY/hX9Fux6dcJCeiQTNBK1F3oFKqqlhpUoKVJA34gfIWs0VkcO1051jn5d0";
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII1p2OamHpIwYUh0mS3yj/CDmT01n4leoYCd/tuqMJHt deathraymind@gmail.com"
+    ];
   };
 
-  # --- FILEBROWSER CONFIGURATION ---
-  services.filebrowser = {
+  # --- SYSTEM PACKAGES ---
+  environment.systemPackages = with pkgs; [
+    nextcloud33
+  ];
+
+  # --- NEXTCLOUD CONFIGURATION ---
+  services.nextcloud = {
     enable = true;
-    user = "deathraymind"; # <-- Lifted out of settings so NixOS reads it
-    group = "users";
+    package = pkgs.nextcloud33;
+    hostName = "0.0.0.0";
     settings = {
-      address = "0.0.0.0";
-      dataDir = "/var/lib/filebrowser"; # <-- Keeps systemd happy during boot CHDIR
-      port = 8080;
-      package = pkgs.filebrowser-quantum;
-      root = "/home/deathraymind/Storage"; # Your main NAS data pool
-      database = "/var/lib/filebrowser/filebrowser.db"; # Safe global spot for the DB file
+      trusted_domains = ["192.168.1.105"];
+      files_external_allow_create_steps_local = true;
     };
+    config = {
+      adminuser = "deathraymind";
+      #  echo -n "YourPasswordHere" | sudo tee /etc/nextcloud-admin-pass
+      adminpassFile = "/etc/nextcloud-admin-pass";
+      dbtype = "sqlite";
+    };
+  };
+
+  # --- PAIRDROP CONFIGURATION ---
+  services.pairdrop = {
+    enable = true;
+    port = 3000;
   };
 
   # --- SYNCTHING CONFIGURATION ---
   services.syncthing = {
     enable = true;
+    overrideFolders = true;
     guiAddress = "0.0.0.0:8384";
     openDefaultPorts = true;
-    user = "deathraymind";
-    dataDir = "/home/deathraymind/.local/share/syncthing";
-    configDir = "/home/deathraymind/.config/syncthing";
+    user = "nextcloud";
+    group = "nextcloud";
+    dataDir = "/var/lib/nextcloud/.local/share/syncthing";
+    configDir = "/var/lib/nextcloud/.config/syncthing";
+    settings.gui = {
+      user = "deathraymind";
+      # nix-shell -p apacheHttpd --run "htpasswd -B -n deathraymind"
+      password = "$2y$05$JD3E5X0/qxKZLDYx4G1ZHOu6Vysq/YT0yPOg34mQjbsglyv2JkJjC";
+    };
   };
-  # journalctl -u filebrowser.service | grep 'admin' run this to get the password
 
-  # --- AUTOMATIC DIRECTORY, PERMISSIONS, & THEME SETUP ---
-  systemd.tmpfiles.rules = [
-    "d /var/lib/filebrowser 0750 deathraymind users - -"
-    "d /var/lib/filebrowser/branding 0755 deathraymind users - -"
-    "d /home/deathraymind/Storage 0755 deathraymind users - -"
-
-    # Declaratively downloads the theme file from GitHub and puts it exactly where FileBrowser needs it
-    "L+ /var/lib/filebrowser/branding/custom.css - - - - ${./filebrowser-theme.css}"
-  ];
-  # --- SYNCTHING VELLUM THEME ---
+  # Syncthing Theme Script
   system.activationScripts.syncthing-vellum-theme = let
-    # Points directly to the local folder in your flake repository
     vellum-theme-src = ./syncthing-themes;
-    targetDir = "/home/deathraymind/.config/syncthing/gui";
+    targetDir = "/var/lib/nextcloud/.config/syncthing/gui";
   in {
     text = ''
       # 1. Purge old links
@@ -77,15 +94,7 @@
       ln -sfn "${vellum-theme-src}/vellum-dark/assets" "${targetDir}/vellum-dark/assets"
 
       # 4. Correct ownership
-      chown -R deathraymind:users "${targetDir}/../"
+      chown -R nextcloud:nextcloud "${targetDir}/../"
     '';
   };
-
-  services.openssh.settings.PasswordAuthentication = true;
-  # System packages
-  environment.systemPackages = with pkgs; [
-  ];
-
-  nixpkgs.config.allowUnfree = true;
-  system.stateVersion = "25.05";
 }

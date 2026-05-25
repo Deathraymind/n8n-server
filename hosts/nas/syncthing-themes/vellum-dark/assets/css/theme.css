@@ -4,62 +4,70 @@
    Same structure as Linen Light, layered warm darks with bronze undertone.
    ============================================================================ */
 
+/* ============================================================================
+   Syncthing — Oxocarbon Black Edition
+   High-contrast, accessible tech aesthetic inspired by IBM Carbon.
+   Layered deep blacks and tech-grays with neon accent pops.
+   ============================================================================ */
+
+/* ============================================================================
+   Syncthing — Oxocarbon Deep Black Edition
+   Recalibrated for maximum darkness, deep grays, and high contrast.
+   ============================================================================ */
+
 :root {
-  /* === SURFACES (4 layers, darkest page → lightest elevated) === */
-  --bg-page:        #1A1612;     /* body background — deep warm coffee */
-  --paper:          #221D17;     /* darkest layer */
-  --surface:        #2A241D;     /* main cards */
-  --elevated:       #322B23;     /* expanded folders, inputs, modals */
-  --overlay:        #382F26;     /* dropdowns, popovers */
-  --tint:           #3D352B;     /* default-button hover */
-  --tint-blue:      #B89D8F14;   /* folder-row hover (warm translucent) */
-  --bg-footer:      #251F19;     /* panel footer bg */
-  --bg-stripe:      #F0EAE008;   /* table-striped even rows */
-  --bg-accordion-heading: #3D332A;
+  /* === SURFACES (Stealth compression — much darker layers) === */
+  --bg-page:               #080808;     /* Near absolute black base background */
+  --paper:                 #121212;     /* Deep carbon container backgrounds */
+  --surface:               #1a1a1a;     /* Dark slate gray for main folder & device cards */
+  --elevated:              #262626;     /* Expanded folders, modals, and input fields */
+  --overlay:               #333333;     /* Dropdowns and popovers */
+  --tint:                  #222222;     /* Hover states for neutral controls */
+  --tint-blue:             rgba(120, 169, 255, 0.05); /* Subtle selection row highlight */
+  --bg-footer:             #0c0c0c;     /* Dark container footers */
+  --bg-stripe:             rgba(255, 255, 255, 0.015); /* Barely visible alternating rows */
+  --bg-accordion-heading:  #121212;
 
-  /* === TEXT (warm cream, never pure white) === */
-  --text:           #F0EAE0;     /* primary */
-  --text-2:         #C9C0B3;     /* secondary */
-  --text-muted:     #8C8478;     /* labels */
-  --text-faint:     #5C564C;     /* placeholders */
+  /* === TEXT (Crisp text calibrated for pitch-black contrast) === */
+  --text:                  #f2f4f8;     /* Primary text — crisp white */
+  --text-2:                #dde1e6;     /* Secondary text — silver */
+  --text-muted:            #9d9d9d;     /* Muted metadata labels */
+  --text-faint:            #474747;     /* Inactive placeholders */
 
-  /* === ACCENT COLORS (desaturated + lightened for dark bg) === */
-  --green:          #7FB68A;
-  --green-soft:     #2C3E33;
-  --green-text:     #B8DEC0;
+  /* === ACCENT COLORS (Oxocarbon Neon Pops) === */
+  --green:                 #42be65;     /* Success / Up-to-date */
+  --green-soft:            rgba(66, 190, 101, 0.08);
+  --green-text:            #abe9b3;
 
-  --blue:           #B89D8F;     /* signature mocha — kept as primary brand */
-  --blue-soft:      #3D332D;
-  --blue-text:      #D9C5B8;
-  --blue-focus:     rgba(184, 157, 143, 0.28);
+  --blue:                  #78a9ff;     /* Signature brand color (Oxocarbon Cobalt) */
+  --blue-soft:             rgba(120, 169, 255, 0.08);
+  --blue-text:             #82cfff;
+  --blue-focus:            rgba(120, 169, 255, 0.25);
 
-  --orange:         #E89A5C;     /* warm peach */
-  --orange-soft:    #3F2E20;
-  --orange-text:    #F5C896;
+  --orange:                #ff832b;     /* Warning states */
+  --orange-soft:           rgba(255, 131, 43, 0.08);
+  --orange-text:           #ffb380;
 
-  --red:            #E58383;     /* coral */
-  --red-soft:       #3D2626;
-  --red-text:       #F5B5B5;
+  --red:                   #ee5396;     /* Error / Disconnected */
+  --red-soft:              rgba(238, 83, 150, 0.08);
+  --red-text:              #ff7eb6;
 
-  --yellow:         #D4B675;     /* honey */
-  --yellow-soft:    #3A2F1C;
-  --yellow-text:    #EBD3A0;
+  --yellow:                #3ddbd9;     /* Out of sync / Notice states */
+  --yellow-soft:           rgba(61, 219, 217, 0.08);
+  --yellow-text:           #80f5f3;
 
-  --purple:         #B89AD4;     /* lavender */
-  --purple-soft:    #312640;
-  --purple-text:    #D8C5E8;
+  --purple:                #be95ff;     /* Oxocarbon Purple */
+  --purple-soft:           rgba(190, 149, 255, 0.08);
+  --purple-text:           #d9c5ff;
 
-  --teal:           #7FB8B5;     /* sage-teal */
-  --teal-soft:      #1F3837;
-  --teal-text:      #ADD9D6;
+  --teal:                  #08bdba;     /* Oxocarbon Deep Teal */
+  --teal-soft:             rgba(8, 189, 186, 0.08);
+  --teal-text:             #70efec;
 
-  --pink:           #D89AB5;     /* dusty rose */
-  --pink-soft:      #3D2A33;
+  --pink:                  #ff7eb6;     /* Oxocarbon Pink */
+  --pink-soft:             rgba(255, 126, 182, 0.08);
 
-  /* === BUTTON STATES === */
-  --btn-primary-hover: #4A3F36;
-
-  /* === TYPOGRAPHY === */
+/* === TYPOGRAPHY === */
   --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
   --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
 
