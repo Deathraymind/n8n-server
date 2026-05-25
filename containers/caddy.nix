@@ -46,13 +46,15 @@
       '';
     };
 
-    virtualHosts."homarr.deathraymind.net" = {
+    virtualHosts."vaultwarden.deathraymind.net" = {
       useACMEHost = "deathraymind.net";
       extraConfig = ''
-        reverse_proxy http://192.168.1.7575
+        # Point Caddy directly to your Nix-Nas IP and Vaultwarden port
+        reverse_proxy http://192.168.1.105:8443
+
+        # Tell Caddy to use the certificate files managed by your NixOS ACME configuration
       '';
     };
-
     virtualHosts."panel.deathraymind.net" = {
       useACMEHost = "deathraymind.net";
       extraConfig = ''

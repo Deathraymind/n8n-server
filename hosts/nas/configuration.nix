@@ -9,9 +9,18 @@
   networking.networkmanager.enable = true;
   systemd.services.systemd-networkd-wait-online.enable = pkgs.lib.mkForce false;
   networking.useDHCP = pkgs.lib.mkDefault true;
+  systemd.tmpfiles.rules = [
+    "d /mnt/nas-data  0770 nextcloud nextcloud - -"
+    "Z /mnt/nas-data/nextcloud 0770 nextcloud nextcloud - -"
+  ];
+  fileSystems."/mnt/nas-data" = {
+    device = "NAS_Map"; # This must match the exact Tag name you set in Proxmox
+    fsType = "virtiofs";
+    options = ["defaults" "nofail"];
+  };
 
   # Firewall Rules
-  networking.firewall.allowedTCPPorts = [80 443 3000 8080 8081 8384];
+  networking.firewall.allowedTCPPorts = [80 443 3000 8080 8081 8384 8443];
 
   # Virtualization & Remote Access
   services.qemuGuest.enable = true;
@@ -35,12 +44,37 @@
   environment.systemPackages = with pkgs; [
     nextcloud33
   ];
+  virtualisation.docker.enable = true;
+
+  # 2. Define the Vaultwarden container
+  virtualisation.oci-containers = {
+    backend = "docker";
+    containers = {
+      vaultwarden = {
+        image = "vaultwarden/server:latest"; # Includes the Web Vault UI
+        ports = [
+          "8443:80" # Maps local port 8443 to container port 80
+        ];
+        volumes = [
+          "/var/lib/vaultwarden:/data" # Persists your passwords/data on the host
+        ];
+        environment = {
+          # Change this to the external URL your separate Caddy server will use
+          DOMAIN = "https://yourdomain.com";
+          SIGNUPS_ALLOWED = "true"; # Turn to "false" after creating your account
+        };
+        autoStart = true;
+      };
+    };
+  };
 
   # --- NEXTCLOUD CONFIGURATION ---
   services.nextcloud = {
     enable = true;
     package = pkgs.nextcloud33;
     hostName = "0.0.0.0";
+    datadir = "/mnt/nas-data/nextcloud/";
+    # datadir = "/mnt/nas-data/nextcloud";
     settings = {
       trusted_domains = ["192.168.1.105"];
       files_external_allow_create_steps_local = true;
@@ -67,19 +101,27 @@
     openDefaultPorts = true;
     user = "nextcloud";
     group = "nextcloud";
-    dataDir = "/var/lib/nextcloud/.local/share/syncthing";
-    configDir = "/var/lib/nextcloud/.config/syncthing";
+    #  sudo mkfs.ext4 -L nas-data /dev/sda
+    dataDir = "/var/lib/syncthing";
+    configDir = "/var/lib/syncthing/.config";
     settings.gui = {
       user = "deathraymind";
       # nix-shell -p apacheHttpd --run "htpasswd -B -n deathraymind"
       password = "$2y$05$JD3E5X0/qxKZLDYx4G1ZHOu6Vysq/YT0yPOg34mQjbsglyv2JkJjC";
+    };
+
+    # Map actual storage out to your ZFS pool share path
+    settings.folders = {
+      "nas-sync" = {
+        path = "/mnt/nas-data/syncthing";
+      };
     };
   };
 
   # Syncthing Theme Script
   system.activationScripts.syncthing-vellum-theme = let
     vellum-theme-src = ./syncthing-themes;
-    targetDir = "/var/lib/nextcloud/.config/syncthing/gui";
+    targetDir = "/var/lib/syncthing/.config/gui";
   in {
     text = ''
       # 1. Purge old links
@@ -93,8 +135,8 @@
       ln -sfn "${vellum-theme-src}/vellum-light/assets" "${targetDir}/vellum-light/assets"
       ln -sfn "${vellum-theme-src}/vellum-dark/assets" "${targetDir}/vellum-dark/assets"
 
-      # 4. Correct ownership
-      chown -R nextcloud:nextcloud "${targetDir}/../"
+      # 4. Correct ownership of local runtime state directory
+      chown -R nextcloud:nextcloud "/var/lib/syncthing"
     '';
   };
 }
