@@ -4,6 +4,18 @@
   agenix,
   ...
 }: {
+  services.cloudflare-dyndns = {
+    enable = true;
+
+    # Domains or subdomains you want to keep updated with your public IP
+    domains = [
+      "deathraymind.net"
+    ];
+
+    # Points to your existing secret file that contains CLOUDFLARE_API_TOKEN
+    apiTokenFile = "/var/secrets/cloudflare.env";
+  };
+
   # Install agenix CLI
   environment.systemPackages = with pkgs; [
     agenix.packages.${pkgs.system}.default
