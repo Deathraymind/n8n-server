@@ -21,20 +21,17 @@
         ./hosts/caddy/caddy-host.nix
         ./services/postgress/postgress.nix
         ./hosts/caddy/configuration.nix
+        ./hosts/caddy/hardware-configuration.nix # Include our rewritten hardware file
         agenix.nixosModules.default
 
-        # Proxmox specific configuration (Replaced hardware-configuration.nix)
+        # This block instructs Nix to build a generic VHD image layout
         ({modulesPath, ...}: {
-          imports = [(modulesPath + "/virtualisation/proxmox-image.nix")];
-          virtualisation.diskSize = 20480; # 20 GB initial image size
-          services.qemuGuest.enable = true;
-          boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
-          networking.hostName = "caddy";
-          nix.settings.trusted-users = ["root" "deathraymind"];
+          virtualisation.diskSize = 20480; # 20 GB Image
         })
       ];
       specialArgs = {inherit agenix inputs;};
     };
+
     nixosConfigurations.nas = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -44,7 +41,6 @@
 
         # Proxmox specific configuration (Replaced hardware-configuration.nix)
         ({modulesPath, ...}: {
-          imports = [(modulesPath + "/virtualisation/proxmox-image.nix")];
           virtualisation.diskSize = 20480; # 20 GB initial image size
           services.qemuGuest.enable = true;
           boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes

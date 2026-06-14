@@ -1,11 +1,15 @@
-{modulesPath, ...}: {
-  imports = [
-    # Built-in NixOS profile for Proxmox KVM virtualisation
-    (modulesPath + "/virtualisation/proxmox-image.nix")
-  ];
+{
+  config,
+  pkgs,
+  modulesPath,
+  ...
+}: {
+  # The generic VHD generator labels the main system partition as "nixos"
+  fileSystems."/" = {
+    device = "/dev/disk/by-label/nixos";
+    fsType = "ext4";
+  };
 
-  # Basic hardware tweaks for virtual machines
-  nixpkgs.hostPlatform = "x86_64-linux";
-  proxmox.qemu.diskSize = "20G";
-  # Tell Proxmox to dynamically adjust disk size if needed
+  # Xen console support so your boot logs stream straight to Xen Orchestra's console tab
+  boot.kernelParams = ["console=hvc0"];
 }
