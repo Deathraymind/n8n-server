@@ -15,6 +15,31 @@
     agenix,
     ...
   } @ inputs: {
+    # =============================
+    # PHYSICAL NODES
+    # =============================
+
+    nixosConfigurations.node1 = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/node1/default.nix
+        agenix.nixosModules.default
+      ];
+      specialArgs = {inherit agenix inputs;};
+    };
+
+    nixosConfigurations.node2 = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/node2/default.nix
+        agenix.nixosModules.default
+      ];
+      specialArgs = {inherit agenix inputs;};
+    };
+
+    # =============================
+    # VM IMAGES (for building/importing)
+    # =============================
     nixosConfigurations.caddy = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -62,9 +87,7 @@
 
         # Proxmox specific configuration (Replaced hardware-configuration.nix)
         ({modulesPath, ...}: {
-          imports = [(modulesPath + "/virtualisation/proxmox-image.nix")];
           virtualisation.diskSize = 20480; # 20 GB initial image size
-          services.qemuGuest.enable = true;
           boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
           networking.hostName = "pelican";
           nix.settings.trusted-users = ["root" "deathraymind"];
@@ -83,9 +106,7 @@
 
         # Proxmox specific configuration (Replaced hardware-configuration.nix)
         ({modulesPath, ...}: {
-          imports = [(modulesPath + "/virtualisation/proxmox-image.nix")];
           virtualisation.diskSize = 20480; # 20 GB initial image size
-          services.qemuGuest.enable = true;
           boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
           networking.hostName = "pelican";
           nix.settings.trusted-users = ["root" "deathraymind"];
