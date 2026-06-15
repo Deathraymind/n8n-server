@@ -1,6 +1,9 @@
 {modulesPath, ...}: {
   imports = [../../modules/common.nix ./hardware.nix];
-
+  boot.loader.grub = {
+    enable = true;
+    device = "/dev/sda"; # bare metal uses sda not xvda
+  };
   networking.hostName = "node1";
   networking.interfaces.eth0.ipv4.addresses = [
     {
