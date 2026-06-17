@@ -1,0 +1,23 @@
+nix-shell -p sops age ssh-to-age
+
+
+mkdir -p ~/.config/sops/age
+age-keygen -o ~/.config/sops/age/keys.txt
+
+ssh into machine then grab the ssh key after exiting it again 
+
+ssh-keyscan -t ed25519 123.456.789.123 2>/dev/null | ssh-to-age
+
+
+Step 4 — create .sops.yaml at your flake root. This tells sops which keys are recipients for which files:
+yamlkeys:
+  - &deathraymind age1yourpersonalkeyfromstep2...
+  - &pelican_host age1thehostskeyfromstep3...
+creation_rules:
+  - path_regex: secrets/pelican\.yaml$
+    key_groups:
+      - age:
+          - *deathraymind
+          - *pelican_host
+Step 5 — create the encrypted secrets file. From your flake root:
+sops secrets/pelican.yaml
