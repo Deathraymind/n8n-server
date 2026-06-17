@@ -18,23 +18,23 @@
   sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
   sops.secrets."pelican/app_key" = {
-    owner = "pelican";
-    group = "pelican";
+    owner = "pelican-panel";
+    group = "nginx";
     mode = "0400";
   };
   sops.secrets."pelican/db_password" = {
-    owner = "pelican";
-    group = "pelican";
+    owner = "pelican-panel";
+    group = "nginx";
     mode = "0400";
   };
   sops.secrets."pelican/redis_password" = {
-    owner = "pelican";
-    group = "pelican";
+    owner = "pelican-panel";
+    group = "nginx";
     mode = "0400";
   };
   sops.secrets."pelican/mail_password" = {
-    owner = "pelican";
-    group = "pelican";
+    owner = "pelican-panel";
+    group = "nginx";
     mode = "0400";
   };
 

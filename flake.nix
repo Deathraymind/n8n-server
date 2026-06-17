@@ -90,6 +90,7 @@
         inputs.pelican.nixosModules.default
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
         ./hosts/pelican-wings/pelican-wings.nix
+        ./hosts/pelican-wings/hardware-configuration.nix
         ./hosts/pelican-wings/configuration.nix
         inputs.sops-nix.nixosModules.sops
         # Proxmox specific configuration (Replaced hardware-configuration.nix)

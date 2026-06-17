@@ -1,10 +1,9 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: {
-  boot.loader.grub.enable = true;
-
   # --- NETWORKING CONFIGURATION ---
   networking.hostName = "pelican-node1";
   networking.firewall.allowedTCPPorts = [8080 2022];
@@ -18,56 +17,6 @@
     fsType = "iso9660";
     options = ["ro" "nofail"];
   };
-
-  # --- CLOUD-INIT CONFIGURATION ---
-  services.cloud-init = {
-    enable = true;
-    network.enable = true;
-
-    settings = {
-      datasource_list = ["NoCloud" "ConfigDrive"];
-      datasource = {
-        NoCloud = {
-          seedfrom = "/mnt/configdrive/";
-        };
-      };
-    };
-
-    config = ''
-      cloud_init_modules:
-        - migrator
-        - seed_random
-        - bootcmd
-        - growpart
-        - resizefs
-        - set_hostname
-        - update_hostname
-        - update_etc_hosts
-        - ca_certs
-        - rsyslog
-        - users_groups
-        - ssh
-      cloud_config_modules:
-        - write_files
-      cloud_final_modules:
-        - final-message
-    '';
-  };
-
-  # --- NIXOS MANAGED PERMISSIONS & DIRECTORY SANITIZATION ---
-  systemd.tmpfiles.rules = [
-    "d /var/secrets 0755 root root - -"
-    "d /var/secrets/pelican 0755 root root - -"
-
-    # Force the token files to be globally readable to prevent permission blocks
-    "z /var/secrets/pelican/token_id 0644 root root - -"
-    "z /var/secrets/pelican/token 0644 root root - -"
-  ];
-
-  # --- FORCE SERVICE BOOT ORDER ---
-  # Ensures the wings service delays initialization until cloud-final writes the tokens
-  systemd.services.pelican-wings.after = ["cloud-final.service"];
-  systemd.services.pelican-wings.wants = ["cloud-final.service"];
 
   # --- VIRTUALIZATION & ACCESS ---
   services.qemuGuest.enable = true;
@@ -99,8 +48,8 @@
     openFirewall = true;
     uuid = "a16a0079-62b6-43d9-b413-3e6ac50d322c";
     remote = "https://panel.deathraymind.net";
-    tokenIdFile = "/var/secrets/pelican/token_id";
-    tokenFile = "/var/secrets/pelican/token";
+    tokenIdFile = config.sops.secrets."pelican/tokenIdFile".path;
+    tokenFile = config.sops.secrets."pelican/tokenFile".path;
     api.ssl.enable = false;
   };
 
