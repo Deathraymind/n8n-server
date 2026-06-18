@@ -4,14 +4,27 @@
   config,
   ...
 }: {
-  boot.loader.grub.enable = true;
-  # --- NETWORKING CONFIGURATION ---
-  networking.hostName = "Game-Server";
-  # --- CLOUD-INIT PROXMOX FIX ---
-  networking.networkmanager.enable = true;
-  networking.useDHCP = pkgs.lib.mkDefault true;
-  networking.firewall.allowedTCPPorts = [80 443];
-  systemd.services.systemd-networkd-wait-online.enable = lib.mkForce false;
+  imports = [
+    # ../../containers/.nix
+  ];
+  virtualisation.docker = {
+    enable = true;
+    # Set up resource limits
+    daemon.settings = {
+      experimental = true;
+      default-address-pools = [
+        {
+          base = "172.30.0.0/16";
+          size = 24;
+        }
+      ];
+    };
+  };
+
+  users.users.bowyn = {
+    isNormalUser = true;
+    extraGroups = ["wheel" "docker"];
+  };
 
   # --- SOPS SECRETS ---
   sops.defaultSopsFile = ../../secrets/pelican.yaml;
@@ -39,9 +52,6 @@
   };
 
   # --- VIRTUALIZATION & ACCESS ---
-  services.qemuGuest.enable = true;
-  services.openssh.enable = true;
-  services.openssh.settings.PasswordAuthentication = true;
 
   # --- USER CONFIGURATION ---
   users.users.deathraymind = {
@@ -60,6 +70,9 @@
     vim
     curl
     htop
+    docker
+    docker-compose
+    git
   ];
 
   # --- PELICAN PANEL ---
@@ -73,7 +86,6 @@
   };
 
   # --- SYSTEM BACKENDS & CONFIG ---
-  virtualisation.docker.enable = true;
   nixpkgs.config.allowUnfree = true;
   system.stateVersion = "25.05";
 }

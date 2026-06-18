@@ -15,7 +15,7 @@
 
   # Set the default gateway
   networking = {
-    firewall.allowedTCPPorts = [8080 2022];
+    firewall.allowedTCPPorts = [8080 2022 80 443];
     defaultGateway = "192.168.1.1";
     hostName = "pelican";
     nameservers = ["1.1.1.1" "8.8.8.8"];

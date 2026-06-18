@@ -60,7 +60,6 @@
       modules = [
         inputs.pelican.nixosModules.default
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
-        ./hosts/pelican/pelican-host.nix
         ./hosts/pelican/configuration.nix
         ./modules/hardware-configuration.nix # Include our rewritten hardware file
         ./modules/common.nix # Include our rewritten hardware file
