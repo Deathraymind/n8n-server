@@ -37,8 +37,6 @@
     nixosConfigurations.caddy = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        ./hosts/caddy/caddy-host.nix
-        ./services/postgress/postgress.nix
         ./hosts/caddy/configuration.nix
         ./modules/hardware-configuration.nix # Include our rewritten hardware file
         ./modules/common.nix # Include our rewritten hardware file
