@@ -1,9 +1,17 @@
 {
   config,
   pkgs,
-  agenix,
   ...
 }: {
+  sops.defaultSopsFile = ../../secrets/pelican.yaml;
+  sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+
+  sops.secrets."pelican/app_key" = {
+    owner = "deathraymind";
+    group = "nginx";
+    mode = "0400";
+  };
+
   services.cloudflare-dyndns = {
     enable = true;
 
@@ -13,21 +21,13 @@
     ];
 
     # Points to your existing secret file that contains CLOUDFLARE_API_TOKEN
-    apiTokenFile = "/var/secrets/cloudflare.env";
+    apiTokenFile = config.sops.secrets."pelican/app_key".path;
   };
 
   # Install agenix CLI
-  environment.systemPackages = with pkgs; [
-    agenix.packages.${pkgs.system}.default
-  ];
   # 1. Enable Cloud-Init so it listens to Proxmox
-  services.cloud-init.enable = true;
-  services.cloud-init.network.enable = true;
   # 2. Prevent ACME from racing ahead before Cloud-Init finishes writing the file
-  systemd.services.caddy.after = ["acme-deathraymind.net.service"];
   networking.firewall.allowedTCPPorts = [80 443];
-
-  # Use agenix for the Cloudflare token
 
   security.acme = {
     acceptTerms = true;
@@ -38,7 +38,7 @@
       domain = "deathraymind.net";
       extraDomainNames = ["*.deathraymind.net"];
       dnsProvider = "cloudflare";
-      environmentFile = "/var/secrets/cloudflare.env";
+      environmentFile = config.sops.secrets."pelican/app_key".path;
     };
   };
   services.caddy = {

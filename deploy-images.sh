@@ -1,82 +1,101 @@
 #!/usr/bin/env bash
-set -e # Exit immediately if any command fails
-# make sure there is a ssh key on the machine  ssh-copy-id -i ~/.ssh/id_ed25519.pub root@192.168.1.144
-# --- GLOBAL CONFIGURATION ---
-PROXMOX_IP="192.168.1.144"
-PROXMOX_USER="root"
-STORAGE_POOL="NVME_Fast_Storage"
+#
+# deploy-vm.sh
+#
+# Builds a NixOS flake output into a raw disk image, converts it to qcow2,
+# copies it to a libvirt host, and creates the VM with virt-install.
+#
+# Run this from the directory containing your flake.nix.
 
-# --- VM CONFIGURATION ARRAY ---
-HOSTS=(
-   #"caddy:100:Caddy-ReverseProxy:4096:+100G"
-   #"pelican:101:Pelican-Backend:4096:+150G"
-  # "pelican-wings:102:Pelican-Wings:4096:+50G"
-   "nas:105:Nix-Nas:4096:+50G"
-)
+set -euo pipefail
 
-# --- EXECUTION ---
-for entry in "${HOSTS[@]}"; do
-  # Parse the expanded colon-separated string
-  IFS=":" read -r FLAKE_ATTR VMID VM_NAME RAM_SIZE DISK_ADD <<< "$entry"
-  
-  echo "================================================="
-  echo "Processing: $FLAKE_ATTR"
-  echo "VM ID:       $VMID"
-  echo "VM Name:     $VM_NAME"
-  echo "RAM:         $RAM_SIZE"
-  echo "Disk Add:    $DISK_ADD"
-  echo "================================================="
-
-  # 1. Run your exact working build command
-  echo "Building Proxmox image..."
-  nixos-rebuild build-image --image-variant proxmox --flake .#"$FLAKE_ATTR"
-  
-  # Resolve the store path via the 'result' symlink nixos-rebuild leaves behind
-  BUILD_PATH=$(readlink -f result)
-  
-  # Find the actual .vma.zst file inside that directory
-  VMA_FILE=$(find "$BUILD_PATH" -name "*.vma.zst" -print -quit)
-  VMA_FILENAME=$(basename "$VMA_FILE")
-
-  # 2. Copy it over to Proxmox
-  echo "Uploading image to Proxmox..."
-  scp "$VMA_FILE" "$PROXMOX_USER@$PROXMOX_IP:/var/lib/vz/dump/"
-
-  # 3. Restore and customize on Proxmox via SSH
-  echo "Provisioning VM on Proxmox host..."
-  ssh "$PROXMOX_USER@$PROXMOX_IP" << EOF
-   if qm status $VMID >/dev/null 2>&1; then
-      echo "VM $VMID exists. Stopping and purging old instance..."
-      qm stop $VMID || true
-      qm unlock $VMID || true
-      qm destroy $VMID --purge 1
-    fi 
-    # Check if the VM already exists before attempting a restore
-    if qm status $VMID >/dev/null 2>&1; then
-      echo "VM $VMID already exists. Skipping raw image restore to protect your data."
-    else
-      echo "VM $VMID does not exist. Restoring base image..."
-      qmrestore /var/lib/vz/dump/$VMA_FILENAME $VMID --storage $STORAGE_POOL
-    fi
-   echo "Creating empty target shell configuration..."
-    qm create $VMID --name "$VM_NAME" --memory $RAM_SIZE --net0 virtio,bridge=vmbr0 
-    # Customize VM Name, RAM, and boot device while the VM is offline
-    echo "Applying hardware specs (Name: $VM_NAME, RAM: $RAM_SIZE)..."
-    qm set $VMID --name "$VM_NAME" --memory "$RAM_SIZE" --boot order=virtio0 --agent enabled=1
-    
-    # Resize disk dynamically based on configuration array
-    # Using '|| true' because Proxmox will error if you try to add space that already exists
-    echo "Resizing disk by $DISK_ADD..."
-    qm resize $VMID virtio0 $DISK_ADD || true
-    
-    # Start the VM back up
-    echo "Starting VM..."
-    qm start $VMID
-EOF
-
-  # Clean up the local 'result' symlink so the next loop cycle handles it cleanly
-  rm result
-
-  echo "Initial deployment complete for $FLAKE_ATTR ($VM_NAME)."
-  echo "------------------------------------------------"
+# --- Sanity-check required tools are available locally ---
+for cmd in nixos-generate qemu-img scp ssh; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Required command '$cmd' not found in PATH. Aborting." >&2
+    exit 1
+  fi
 done
+
+# --- Ask what to build/deploy ---
+read -rp "Which flake output do you want to build/deploy (e.g. caddy): " FLAKE_ATTR
+if [[ -z "$FLAKE_ATTR" ]]; then
+  echo "No flake attribute given, aborting." >&2
+  exit 1
+fi
+
+read -rp "VM name on the libvirt host [default: ${FLAKE_ATTR}]: " VM_NAME
+VM_NAME="${VM_NAME:-$FLAKE_ATTR}"
+
+read -rp "Target libvirt node (user@host), e.g. deathraymind@192.168.1.100: " NODE_TARGET
+if [[ -z "$NODE_TARGET" ]]; then
+  echo "No target node given, aborting." >&2
+  exit 1
+fi
+
+read -rp "Memory in MB [2048]: " VM_MEMORY
+VM_MEMORY="${VM_MEMORY:-2048}"
+
+read -rp "vCPUs [2]: " VM_VCPUS
+VM_VCPUS="${VM_VCPUS:-2}"
+
+read -rp "Bridge network [br0]: " VM_NET
+VM_NET="${VM_NET:-br0}"
+
+read -rp "OS variant [linux2022]: " OS_VARIANT
+OS_VARIANT="${OS_VARIANT:-linux2022}"
+
+IMAGES_DIR="/var/lib/libvirt/images"
+WORKDIR="$(mktemp -d)"
+QCOW2_LOCAL="${WORKDIR}/${VM_NAME}.qcow2"
+
+cleanup() {
+  rm -rf "$WORKDIR"
+}
+trap cleanup EXIT
+
+# --- Build the raw image ---
+echo "==> Building raw image for flake .#${FLAKE_ATTR}"
+GEN_OUTPUT="$(nixos-generate --flake ".#${FLAKE_ATTR}" -f raw | tail -n1)"
+
+if [[ -z "$GEN_OUTPUT" || ! -e "$GEN_OUTPUT" ]]; then
+  echo "Could not determine nixos-generate output path. Got: '${GEN_OUTPUT}'" >&2
+  exit 1
+fi
+
+RAW_IMG="$GEN_OUTPUT"
+if [[ -d "$GEN_OUTPUT" ]]; then
+  RAW_IMG="$(find "$GEN_OUTPUT" -maxdepth 1 -type f \( -name '*.img' -o -name '*.raw' \) | head -n1)"
+fi
+
+if [[ -z "$RAW_IMG" || ! -f "$RAW_IMG" ]]; then
+  echo "Could not find a raw image inside ${GEN_OUTPUT}" >&2
+  exit 1
+fi
+
+echo "==> Raw image: ${RAW_IMG}"
+
+# --- Convert to qcow2 ---
+echo "==> Converting to qcow2: ${QCOW2_LOCAL}"
+qemu-img convert -f raw -O qcow2 "$RAW_IMG" "$QCOW2_LOCAL"
+
+# --- Copy to the libvirt node ---
+echo "==> Copying ${VM_NAME}.qcow2 to ${NODE_TARGET}:${IMAGES_DIR}/"
+scp "$QCOW2_LOCAL" "${NODE_TARGET}:${IMAGES_DIR}/${VM_NAME}.qcow2"
+
+# --- Create the VM on the node ---
+echo "==> Creating VM '${VM_NAME}' on ${NODE_TARGET}"
+ssh -t "$NODE_TARGET" \
+  "sudo virt-install \
+    --name '${VM_NAME}' \
+    --memory '${VM_MEMORY}' \
+    --vcpus '${VM_VCPUS}' \
+    --disk '${IMAGES_DIR}/${VM_NAME}.qcow2' \
+    --import \
+    --os-variant '${OS_VARIANT}' \
+    --network bridge='${VM_NET}' \
+    --noautoconsole"
+
+echo
+echo "Done. VM '${VM_NAME}' should now be defined on ${NODE_TARGET}."
+echo "Check with: ssh ${NODE_TARGET} 'sudo virsh list --all'"

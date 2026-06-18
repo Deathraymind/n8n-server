@@ -5,17 +5,22 @@
   ...
 }: {
   # --- NETWORKING CONFIGURATION ---
-  networking.hostName = "pelican-node1";
   networking.firewall.allowedTCPPorts = [8080 2022];
   networking.networkmanager.enable = true;
   networking.useDHCP = pkgs.lib.mkDefault true;
   systemd.services.systemd-networkd-wait-online.enable = lib.mkForce false;
+  sops.defaultSopsFile = ../../secrets/pelican.yaml;
+  sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
-  # --- PROXMOX ISO DRIVE MOUNT FIX ---
-  fileSystems."/mnt/configdrive" = {
-    device = "/dev/sr0";
-    fsType = "iso9660";
-    options = ["ro" "nofail"];
+  sops.secrets."pelican/tokenFile" = {
+    owner = "pelican-panel";
+    group = "nginx";
+    mode = "0400";
+  };
+  sops.secrets."pelican/tokenIdFile" = {
+    owner = "pelican-panel";
+    group = "nginx";
+    mode = "0400";
   };
 
   # --- VIRTUALIZATION & ACCESS ---
