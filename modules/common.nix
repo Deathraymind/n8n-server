@@ -1,4 +1,8 @@
 {pkgs, ...}: {
+  virtualisation.diskSize = 20480; # 20 GB initial image size
+  boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
+
+  services.qemuGuest.enable = true;
   # Nix
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];

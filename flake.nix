@@ -40,12 +40,10 @@
         ./hosts/caddy/caddy-host.nix
         ./services/postgress/postgress.nix
         ./hosts/caddy/configuration.nix
-        ./hosts/caddy/hardware-configuration.nix # Include our rewritten hardware file
+        ./modules/hardware-configuration.nix # Include our rewritten hardware file
+        ./modules/common.nix # Include our rewritten hardware file
         inputs.sops-nix.nixosModules.sops
         # This block instructs Nix to build a generic VHD image layout
-        ({modulesPath, ...}: {
-          virtualisation.diskSize = 20480; # 20 GB Image
-        })
       ];
       specialArgs = {inherit inputs;};
     };
@@ -56,13 +54,6 @@
         ./hosts/nas/configuration.nix
         inputs.sops-nix.nixosModules.sops
         # Proxmox specific configuration (Replaced hardware-configuration.nix)
-        ({modulesPath, ...}: {
-          virtualisation.diskSize = 20480; # 20 GB initial image size
-          services.qemuGuest.enable = true;
-          boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
-          networking.hostName = "nix-nas";
-          nix.settings.trusted-users = ["root" "deathraymind"];
-        })
       ];
       specialArgs = {inherit inputs;};
     };
@@ -73,14 +64,10 @@
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
         ./hosts/pelican/pelican-host.nix
         ./hosts/pelican/configuration.nix
-        ./hosts/caddy/hardware-configuration.nix # Include our rewritten hardware file
+        ./modules/hardware-configuration.nix # Include our rewritten hardware file
+        ./modules/common.nix # Include our rewritten hardware file
         inputs.sops-nix.nixosModules.sops
         # Proxmox specific configuration (Replaced hardware-configuration.nix)
-        ({modulesPath, ...}: {
-          virtualisation.diskSize = 20480; # 20 GB initial image size
-          boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
-          nix.settings.trusted-users = ["root" "deathraymind"];
-        })
       ];
       specialArgs = {inherit inputs;};
     };
@@ -89,17 +76,11 @@
       modules = [
         inputs.pelican.nixosModules.default
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
-        ./hosts/pelican-wings/pelican-wings.nix
-        ./hosts/pelican-wings/hardware-configuration.nix
+        ./modules/hardware-configuration.nix
+        ./modules/common.nix
         ./hosts/pelican-wings/configuration.nix
         inputs.sops-nix.nixosModules.sops
         # Proxmox specific configuration (Replaced hardware-configuration.nix)
-        ({modulesPath, ...}: {
-          virtualisation.diskSize = 20480; # 20 GB initial image size
-          boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
-          networking.hostName = "pelican";
-          nix.settings.trusted-users = ["root" "deathraymind"];
-        })
       ];
       specialArgs = {inherit inputs;};
     };

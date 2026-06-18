@@ -4,11 +4,26 @@
   config,
   ...
 }: {
+  virtualisation.docker = {
+    enable = true;
+    # Set up resource limits
+    daemon.settings = {
+      experimental = true;
+      default-address-pools = [
+        {
+          base = "172.30.0.0/16";
+          size = 24;
+        }
+      ];
+    };
+  };
+
+  users.users.bowyn = {
+    isNormalUser = true;
+    extraGroups = ["wheel" "docker"];
+  };
+
   # --- NETWORKING CONFIGURATION ---
-  networking.firewall.allowedTCPPorts = [8080 2022];
-  networking.networkmanager.enable = true;
-  networking.useDHCP = pkgs.lib.mkDefault true;
-  systemd.services.systemd-networkd-wait-online.enable = lib.mkForce false;
   sops.defaultSopsFile = ../../secrets/pelican.yaml;
   sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
@@ -25,8 +40,6 @@
 
   # --- VIRTUALIZATION & ACCESS ---
   services.qemuGuest.enable = true;
-  services.openssh.enable = true;
-  services.openssh.settings.PasswordAuthentication = true;
 
   # --- USER CONFIGURATION ---
   users.users.deathraymind = {
@@ -45,6 +58,9 @@
     vim
     curl
     htop
+    docker
+    docker-compose
+    git
   ];
 
   # --- PELICAN WINGS ---
@@ -59,7 +75,6 @@
   };
 
   # --- SYSTEM BACKENDS & CONFIG ---
-  virtualisation.docker.enable = true;
   nixpkgs.config.allowUnfree = true;
   system.stateVersion = "25.05";
 }
