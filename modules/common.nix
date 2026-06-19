@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   virtualisation.diskSize = 20480; # 20 GB initial image size
   boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
 
@@ -15,15 +19,11 @@
   programs.virt-manager.enable = true;
 
   # Networking
-  networking.useDHCP = true;
-  networking.firewall.enable = true;
 
   # SSH
   services.openssh = {
     enable = true;
     settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
     };
   };
 

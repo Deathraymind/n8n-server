@@ -21,3 +21,7 @@ creation_rules:
           - *pelican_host
 Step 5 — create the encrypted secrets file. From your flake root:
 sops secrets/pelican.yaml
+
+if you update anything run 
+
+sops updatekeys secrets/pelican.yaml

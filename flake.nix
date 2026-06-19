@@ -38,8 +38,10 @@
       system = "x86_64-linux";
       modules = [
         ./hosts/caddy/configuration.nix
+        ./hosts/caddy/networking.nix
         ./modules/hardware-configuration.nix # Include our rewritten hardware file
         ./modules/common.nix # Include our rewritten hardware file
+
         inputs.sops-nix.nixosModules.sops
         # This block instructs Nix to build a generic VHD image layout
       ];
@@ -50,6 +52,10 @@
       modules = [
         ./hosts/nas/nas-host.nix
         ./hosts/nas/configuration.nix
+        ./hosts/nas/networking.nix
+        ./modules/hardware-configuration.nix
+        ./modules/common.nix
+
         inputs.sops-nix.nixosModules.sops
         # Proxmox specific configuration (Replaced hardware-configuration.nix)
       ];
@@ -61,6 +67,7 @@
         inputs.pelican.nixosModules.default
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
         ./hosts/pelican/configuration.nix
+        ./hosts/pelican/networking.nix
         ./modules/hardware-configuration.nix # Include our rewritten hardware file
         ./modules/common.nix # Include our rewritten hardware file
         inputs.sops-nix.nixosModules.sops

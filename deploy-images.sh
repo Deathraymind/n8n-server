@@ -6,11 +6,12 @@
 # copies it to a libvirt host, and creates the VM with virt-install.
 #
 # Run this from the directory containing your flake.nix.
-
 set -euo pipefail
 
-# --- Sanity-check required tools are available locally ---
-for cmd in nixos-generate qemu-img scp ssh; do
+# --- Sanity-check required tools that must be available on the HOST
+#     (nixos-generate / qemu-img come from the nix-shell below, so they
+#     are not checked here). ---
+for cmd in nix-shell scp ssh; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "Required command '$cmd' not found in PATH. Aborting." >&2
     exit 1
@@ -54,10 +55,26 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# --- Build the raw image ---
+# --- Build the raw image and convert it to qcow2 -------------------------
+# Everything in this section needs `nixos-generate` (and qemu-img), so it
+# is written out to a small script and executed inside a nix-shell that
+# provides those tools. When nix-shell's --run command finishes, the
+# shell exits automatically and we fall back to the normal host
+# environment for the rest of the script (scp/ssh/virt-install).
+
+BUILD_SCRIPT="${WORKDIR}/build-image.sh"
+cat > "$BUILD_SCRIPT" <<'EOF'
+set -euo pipefail
+
+for cmd in nixos-generate qemu-img; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Required command '$cmd' not found inside nix-shell. Aborting." >&2
+    exit 1
+  fi
+done
+
 echo "==> Building raw image for flake .#${FLAKE_ATTR}"
 GEN_OUTPUT="$(nixos-generate --flake ".#${FLAKE_ATTR}" -f raw | tail -n1)"
-
 if [[ -z "$GEN_OUTPUT" || ! -e "$GEN_OUTPUT" ]]; then
   echo "Could not determine nixos-generate output path. Got: '${GEN_OUTPUT}'" >&2
   exit 1
@@ -67,23 +84,32 @@ RAW_IMG="$GEN_OUTPUT"
 if [[ -d "$GEN_OUTPUT" ]]; then
   RAW_IMG="$(find "$GEN_OUTPUT" -maxdepth 1 -type f \( -name '*.img' -o -name '*.raw' \) | head -n1)"
 fi
-
 if [[ -z "$RAW_IMG" || ! -f "$RAW_IMG" ]]; then
   echo "Could not find a raw image inside ${GEN_OUTPUT}" >&2
   exit 1
 fi
-
 echo "==> Raw image: ${RAW_IMG}"
 
-# --- Convert to qcow2 ---
 echo "==> Converting to qcow2: ${QCOW2_LOCAL}"
 qemu-img convert -f raw -O qcow2 "$RAW_IMG" "$QCOW2_LOCAL"
+EOF
 
-# --- Copy to the libvirt node ---
+export FLAKE_ATTR QCOW2_LOCAL
+
+echo "==> Entering nix-shell (nixos-generators, qemu) to build + convert image"
+nix-shell -p nixos-generators qemu --run "bash '${BUILD_SCRIPT}'"
+echo "==> Left nix-shell"
+
+if [[ ! -f "$QCOW2_LOCAL" ]]; then
+  echo "Expected qcow2 image at ${QCOW2_LOCAL} but it's missing. Aborting." >&2
+  exit 1
+fi
+
+# --- Copy to the libvirt node --------------------------------------------
 echo "==> Copying ${VM_NAME}.qcow2 to ${NODE_TARGET}:${IMAGES_DIR}/"
 scp "$QCOW2_LOCAL" "${NODE_TARGET}:${IMAGES_DIR}/${VM_NAME}.qcow2"
 
-# --- Create the VM on the node ---
+# --- Create the VM on the node --------------------------------------------
 echo "==> Creating VM '${VM_NAME}' on ${NODE_TARGET}"
 ssh -t "$NODE_TARGET" \
   "sudo virt-install \

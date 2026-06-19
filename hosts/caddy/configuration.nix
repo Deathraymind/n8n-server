@@ -20,11 +20,10 @@
   sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
   sops.secrets."pelican/app_key" = {
-    owner = "deathraymind";
-    group = "nginx";
+    owner = "root";
     mode = "0400";
   };
-  config.services.postgresql = {
+  services.postgresql = {
     enable = true;
     enableTCPIP = true;
     ensureDatabases = ["mydatabase"];
@@ -97,7 +96,7 @@
     virtualHosts."panel.deathraymind.net" = {
       useACMEHost = "deathraymind.net";
       extraConfig = ''
-        reverse_proxy http://192.168.1.135:80
+        reverse_proxy http://192.168.1.50:80
       '';
     };
 
