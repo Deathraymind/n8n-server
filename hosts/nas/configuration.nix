@@ -4,7 +4,6 @@
   ];
 
   # --- SYSTEM & NETWORKING CONFIGURATION ---
-  networking.hostName = "nix-nas";
   boot.loader.grub.enable = true;
   networking.networkmanager.enable = true;
   systemd.services.systemd-networkd-wait-online.enable = pkgs.lib.mkForce false;

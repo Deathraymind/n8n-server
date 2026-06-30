@@ -2,6 +2,7 @@ keys:
   - &deathraymind age1psgzl6fsfu8397ezxuryzyutuw8vdzsehkemjxwqdajl4cf3fpksl3974a 
   - &pelican_host age1n0sr7t0r4yfz503ugn2493acz2uykwzjzgjcza7rnyzgu24mkuusrdcng4 
   - &caddy_host age1q5vcc9h4vssptraxnqh7w8x6p0pxqmfv8l5qqnyny5gk4enj0s3qwu8syz 
+  - &wings age1jpgjh3d4qh7psy66nnj702ua242age3x92ryf7s0lq00djuv3s3spceep4 
 creation_rules:
   - path_regex: secrets/pelican\.yaml$
     key_groups:
@@ -9,3 +10,4 @@ creation_rules:
           - *deathraymind
           - *pelican_host
           - *caddy_host
+          - *wings

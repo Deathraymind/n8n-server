@@ -83,6 +83,7 @@
         ./modules/hardware-configuration.nix
         ./modules/common.nix
         ./hosts/pelican-wings/configuration.nix
+        ./hosts/pelican-wings/networking.nix
         inputs.sops-nix.nixosModules.sops
         # Proxmox specific configuration (Replaced hardware-configuration.nix)
       ];

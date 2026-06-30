@@ -70,38 +70,8 @@
   services.caddy = {
     enable = true;
 
-    virtualHosts."n8n.deathraymind.net" = {
-      useACMEHost = "deathraymind.net"; # This automatically configures permissions and links the certs!
-      extraConfig = ''
-        reverse_proxy http://192.168.1.203:5678
-      '';
-    };
-
-    virtualHosts."jellyfin.deathraymind.net" = {
-      useACMEHost = "deathraymind.net";
-      extraConfig = ''
-        reverse_proxy http://192.168.1.203:8096
-      '';
-    };
-
-    virtualHosts."vaultwarden.deathraymind.net" = {
-      useACMEHost = "deathraymind.net";
-      extraConfig = ''
-        # Point Caddy directly to your Nix-Nas IP and Vaultwarden port
-        reverse_proxy http://192.168.1.105:8443
-
-        # Tell Caddy to use the certificate files managed by your NixOS ACME configuration
-      '';
-    };
-    virtualHosts."panel.deathraymind.net" = {
-      useACMEHost = "deathraymind.net";
-      extraConfig = ''
-        reverse_proxy http://192.168.1.50:80
-      '';
-    };
-
-    virtualHosts."node1.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.51:8080
+    virtualHosts."wings.sylvath.deathraymind.net".extraConfig = ''
+      reverse_proxy http://192.168.1.11:8080
       tls /var/lib/acme/deathraymind.net/fullchain.pem /var/lib/acme/deathraymind.net/key.pem {
         protocols tls1.3
       }
