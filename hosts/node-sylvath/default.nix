@@ -4,12 +4,12 @@
     enable = true;
     device = "/dev/sda"; # bare metal uses sda not xvda
   };
-  networking.hostName = "node1";
+  networking.hostName = "node-sylvath";
   networking.bridges.br0.interfaces = ["eno1"];
   virtualisation.libvirtd.allowedBridges = ["br0" "virbr0"];
   networking.interfaces.br0.ipv4.addresses = [
     {
-      address = "192.168.1.100";
+      address = "192.168.1.2";
       prefixLength = 24;
     }
   ];

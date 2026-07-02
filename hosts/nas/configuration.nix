@@ -13,11 +13,10 @@
     "Z /mnt/nas-data/nextcloud 0770 nextcloud nextcloud - -"
   ];
   fileSystems."/mnt/nas-data" = {
-    device = "NAS_Map"; # This must match the exact Tag name you set in Proxmox
-    fsType = "virtiofs";
-    options = ["defaults" "nofail"];
+    device = "192.168.1.100:/export/data";
+    fsType = "nfs";
+    options = ["nfsvers=4.2" "x-systemd.automount" "noauto" "_netdev"];
   };
-
   # Firewall Rules
   networking.firewall.allowedTCPPorts = [80 443 3000 8080 8081 8384 8443];
 

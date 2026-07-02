@@ -1,8 +1,12 @@
-{modulesPath, ...}: {
+{
+  modulesPath,
+  pkgs,
+  ...
+}: {
   imports = [../../modules/common.nix ./hardware.nix];
   boot.loader.grub = {
     enable = true;
-    device = "/dev/sda"; # bare metal uses sda not xvda
+    device = "/dev/disk/by-id/ata-Samsung_SSD_840_Series_S19HNSAD511826K";
   };
   networking.hostName = "node1";
   networking.bridges.br0.interfaces = ["eno1"];
@@ -31,6 +35,28 @@
     ];
     hashedPassword = "$6$X6ADCAYJr36.atJY$aOzF6Drf0YEq2ac3QnFFU3bhJZNuY/hX9Fux6dcJCeiQTNBK1F3oFKqqlhpUoKVJA34gfIWs0VkcO1051jn5d0";
   };
+  ## Drive Share
+  networking.hostId = "4c27bb3b";
+  environment.systemPackages = [
+    pkgs.zfs
+  ];
+  boot.supportedFilesystems = ["zfs"];
+  boot.zfs.forceImportRoot = false;
+  services.zfs.autoScrub.enable = true;
+  services.zfs.trim.enable = true;
 
+  services.nfs.server = {
+    enable = true;
+    exports = ''
+      /export/data 192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash)
+    '';
+  };
+  fileSystems."/export/data" = {
+    device = "/data";
+    options = ["bind"];
+    fsType = "ext4";
+  };
+
+  networking.firewall.allowedTCPPorts = [2049];
   system.stateVersion = "25.05";
 }

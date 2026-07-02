@@ -9,6 +9,7 @@
     # Set up resource limits
     daemon.settings = {
       experimental = true;
+      dns = ["1.1.1.1" "8.8.8.8"];
       default-address-pools = [
         {
           base = "172.30.0.0/16";
@@ -69,7 +70,7 @@
   services.pelican.wings = {
     enable = true;
     openFirewall = true;
-    uuid = "5440ffea-de51-41fa-baa1-c12cb92e2bf0";
+    uuid = "08b12380-dd90-4c19-8744-df6493a20121";
     remote = "https://panel.deathraymind.net";
     tokenIdFile = config.sops.secrets."pelican/tokenIdFile".path;
     tokenFile = config.sops.secrets."pelican/tokenFile".path;
