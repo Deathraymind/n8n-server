@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: {
-  imports = [../../modules/common.nix ./hardware.nix];
+  imports = [../../modules/common.nix ./hardware.nix ../../modules/qemu-incremental-backup-nightly.nix];
   boot.loader.grub = {
     enable = true;
     device = "/dev/disk/by-id/ata-Samsung_SSD_840_Series_S19HNSAD511826K";
@@ -19,7 +19,15 @@
   ];
   networking.defaultGateway = "192.168.1.1";
   networking.nameservers = ["1.1.1.1" "8.8.8.8"];
-
+  services.qemu-incremental-backup-nightly = {
+    enable = true;
+    # Add all your VMs to this array
+    vms = [
+      "pelican-wings"
+    ];
+    # Optional: Change time (defaults to 3:00 AM)
+    calendar = "*-*-* 03:00:00";
+  };
   # Disable DHCP on eno1 since br0 takes over
 
   services.openssh.enable = true;
@@ -35,6 +43,9 @@
     ];
     hashedPassword = "$6$X6ADCAYJr36.atJY$aOzF6Drf0YEq2ac3QnFFU3bhJZNuY/hX9Fux6dcJCeiQTNBK1F3oFKqqlhpUoKVJA34gfIWs0VkcO1051jn5d0";
   };
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICv8bQ88LagNgl17dyQiSnrlRGRcdrlS/o/wKpF0P76Y root@node2" # node2's pubkey
+  ];
   ## Drive Share
   networking.hostId = "4c27bb3b";
   environment.systemPackages = [
@@ -58,5 +69,39 @@
   };
 
   networking.firewall.allowedTCPPorts = [2049];
+  networking.firewall.allowedTCPPortRanges = [
+    {
+      from = 49152;
+      to = 49215;
+    }
+  ];
   system.stateVersion = "25.05";
+  # Syncoid
+  # ---- Snapshots (local, hourly, on node1's live VMs) ----
+  services.sanoid = {
+    enable = true;
+    datasets."vmpool/images" = {
+      recursive = true; # covers all per-VM child datasets automatically
+      autosnap = true;
+      autoprune = true;
+      hourly = 24; # keep 24 hourly
+      daily = 7; # keep 7 daily
+      weekly = 4; # keep 4 weekly
+      monthly = 0;
+      yearly = 0;
+    };
+  };
+
+  # ---- Replication (push node1's VMs to node2 as backup) ----
+  services.syncoid = {
+    enable = true;
+    interval = "hourly";
+    sshKey = "/var/lib/syncoid/.ssh/id_syncoid";
+    commonArgs = ["--no-sync-snap"]; # use sanoid's snapshots, don't make extra ones
+    commands."vmpool/images" = {
+      source = "vmpool/images";
+      target = "syncoid@192.168.1.99:vmpool/backup/node1/images";
+      recursive = true; # ships all child datasets (caddy, pelican, etc.)
+    };
+  };
 }

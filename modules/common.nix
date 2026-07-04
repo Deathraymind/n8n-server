@@ -17,7 +17,8 @@
   virtualisation.libvirtd.enable = true;
   virtualisation.spiceUSBRedirection.enable = true;
   programs.virt-manager.enable = true;
-
+  boot.supportedFilesystems = ["nfs"];
+  services.rpcbind.enable = true;
   # Networking
 
   # SSH
@@ -43,6 +44,7 @@
     htop
     virtiofsd
     qemu
+    nfs-utils
   ];
 
   nixpkgs.config.allowUnfree = true;

@@ -1,7 +1,18 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   imports = [
     ./homepage.nix
   ];
+  sops.defaultSopsFile = ../../secrets/pelican.yaml;
+  sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+
+  sops.secrets."pelican/nextcloudPassword" = {
+    owner = "nextcloud";
+    mode = "0400";
+  };
 
   # --- SYSTEM & NETWORKING CONFIGURATION ---
   boot.loader.grub.enable = true;
@@ -58,7 +69,7 @@
         ];
         environment = {
           # Change this to the external URL your separate Caddy server will use
-          DOMAIN = "https://yourdomain.com";
+          DOMAIN = "https://vaultwarden.deathraymind.net";
           SIGNUPS_ALLOWED = "true"; # Turn to "false" after creating your account
         };
         autoStart = true;
@@ -74,13 +85,13 @@
     datadir = "/mnt/nas-data/nextcloud/";
     # datadir = "/mnt/nas-data/nextcloud";
     settings = {
-      trusted_domains = ["192.168.1.105"];
+      trusted_domains = ["192.168.1.10" "nextcloud.deathraymind.net"];
       files_external_allow_create_steps_local = true;
     };
     config = {
       adminuser = "deathraymind";
       #  echo -n "YourPasswordHere" | sudo tee /etc/nextcloud-admin-pass
-      adminpassFile = "/etc/nextcloud-admin-pass";
+      adminpassFile = config.sops.secrets."pelican/nextcloudPassword".path;
       dbtype = "sqlite";
     };
   };

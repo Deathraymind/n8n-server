@@ -1,6 +1,7 @@
 {
   modulesPath,
   pkgs,
+  lib,
   ...
 }: {
   imports = [../../modules/common.nix ./hardware.nix];
@@ -9,16 +10,32 @@
     device = "/dev/sda";
   };
   networking.hostName = "node2";
-  networking.bridges.br0.interfaces = ["eno1"];
+  networking.bridges.br0.interfaces = ["enp3s0f0"];
   virtualisation.libvirtd.allowedBridges = ["br0" "virbr0"];
   networking.interfaces.br0.ipv4.addresses = [
     {
-      address = "192.168.1.200";
+      address = "192.168.1.99";
       prefixLength = 24;
     }
   ];
   networking.defaultGateway = "192.168.1.1";
   networking.nameservers = ["1.1.1.1" "8.8.8.8"];
+  ## Drive Share/nvme
+
+  fileSystems."/var/lib/libvirt/images" = {
+    device = "vmpool/images";
+    fsType = "zfs";
+  };
+
+  networking.hostId = "73a55545";
+  environment.systemPackages = [
+    pkgs.zfs
+  ];
+
+  boot.supportedFilesystems = ["zfs"];
+  boot.zfs.forceImportRoot = false;
+  services.zfs.autoScrub.enable = true;
+  services.zfs.trim.enable = true;
 
   # Disable DHCP on eno1 since br0 takes over
 
@@ -35,6 +52,32 @@
     ];
     hashedPassword = "$6$X6ADCAYJr36.atJY$aOzF6Drf0YEq2ac3QnFFU3bhJZNuY/hX9Fux6dcJCeiQTNBK1F3oFKqqlhpUoKVJA34gfIWs0VkcO1051jn5d0";
   };
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOnrq0rH4MjPgJc6jGr0gy8aLO1ew5NqHpEQnXGjWyqM root@node1" # node2's pubkey
+  ];
 
+  networking.firewall.allowedTCPPorts = [2049];
+  networking.firewall.allowedTCPPortRanges = [
+    {
+      from = 49152;
+      to = 49215;
+    }
+  ];
   system.stateVersion = "25.05";
+
+  # Syncoid
+  # node2 config
+  services.syncoid.enable = true; # creates the syncoid user
+
+  users.users.syncoid = {
+    isSystemUser = true;
+    group = "syncoid";
+    home = "/var/lib/syncoid";
+    createHome = lib.mkDefault true;
+    shell = pkgs.bashInteractive; # needs a real shell for zfs recv over ssh
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP03e7L0xaM3o3kV8ygPmoOKdzVjjjxzfZ+UtIz8tuA2 syncoid@node1" # ← the pubkey from step 1
+    ];
+  };
+  users.groups.syncoid = {};
 }

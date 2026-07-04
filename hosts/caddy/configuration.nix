@@ -77,10 +77,10 @@
       '';
     };
 
-    virtualHosts."jellyfin.deathraymind.net" = {
+    virtualHosts."nextcloud.deathraymind.net" = {
       useACMEHost = "deathraymind.net";
       extraConfig = ''
-        reverse_proxy http://192.168.1.203:8096
+        reverse_proxy http://192.168.1.52
       '';
     };
 
@@ -88,7 +88,7 @@
       useACMEHost = "deathraymind.net";
       extraConfig = ''
         # Point Caddy directly to your Nix-Nas IP and Vaultwarden port
-        reverse_proxy http://192.168.1.105:8443
+        reverse_proxy http://192.168.1.52:8443
 
         # Tell Caddy to use the certificate files managed by your NixOS ACME configuration
       '';

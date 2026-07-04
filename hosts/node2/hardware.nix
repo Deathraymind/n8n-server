@@ -11,7 +11,6 @@
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
-  grub.bootloader.device = "/dev/sda";
   boot.initrd.availableKernelModules = ["uhci_hcd" "ehci_pci" "hpsa" "nvme" "usb_storage" "usbhid" "sd_mod" "sr_mod"];
   boot.initrd.kernelModules = [];
   boot.kernelModules = ["kvm-intel"];

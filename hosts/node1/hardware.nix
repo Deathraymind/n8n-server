@@ -16,9 +16,12 @@
   boot.initrd.kernelModules = [];
   boot.kernelModules = ["kvm-intel"];
   boot.extraModulePackages = [];
+  # nvme zfs drive
+
+  # nvme drive
   fileSystems."/var/lib/libvirt/images" = {
-    device = "/dev/disk/by-uuid/9c108d2d-9443-42f5-b62a-6a14654bc67b";
-    fsType = "ext4";
+    device = "vmpool/images";
+    fsType = "zfs";
   };
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/1cc058e9-6f83-4ca5-a7b7-7b9fed099922";
