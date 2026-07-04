@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: {
-  imports = [../../modules/common.nix ./hardware.nix ../../modules/qemu-incremental-backup-nightly.nix];
+  imports = [../../modules/common.nix ./hardware.nix ../../modules/qemu-incremental-backup-nightly.nix ./qemu-live-migrate.nix];
   boot.loader.grub = {
     enable = true;
     device = "/dev/disk/by-id/ata-Samsung_SSD_840_Series_S19HNSAD511826K";
@@ -19,14 +19,23 @@
   ];
   networking.defaultGateway = "192.168.1.1";
   networking.nameservers = ["1.1.1.1" "8.8.8.8"];
+  programs.qemu-live-migrate = {
+    enable = true;
+    defaultUser = "deathraymind";
+  };
   services.qemu-incremental-backup-nightly = {
     enable = true;
-    # Add all your VMs to this array
+
+    # List the VMs hosted on THIS specific node that need backing up
     vms = [
       "pelican-wings"
+      "caddy"
+      "pelican"
+      # "pihole"
     ];
-    # Optional: Change time (defaults to 3:00 AM)
-    calendar = "*-*-* 03:00:00";
+
+    # Optional: Override the default 3:00 AM run time if you want
+    calendar = "*-*-* 04:30:00";
   };
   # Disable DHCP on eno1 since br0 takes over
 

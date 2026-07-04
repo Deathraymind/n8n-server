@@ -141,6 +141,7 @@ in {
         gawk
         gnugrep
         util-linux # Provides flock
+        net-tools # Provides hostname
       ];
 
       serviceConfig = {
