@@ -16,11 +16,8 @@ with lib; let
     OVERLAY_NAME="daily"
     DISK="vda"
 
-    case "$(hostname)" in
-      node1) PEER=192.168.1.99  ;;
-      node2) PEER=192.168.1.100 ;;
-      *) echo "unknown host $(hostname); refusing"; exit 1 ;;
-    esac
+    # Much cleaner! We just grab the IP directly from your Nix configuration.
+    PEER="${cfg.peerIp}"
 
     # Global lock prevents cron overlaps if a sync takes longer than 24h
     exec 9>/tmp/pelican-daily.lock
@@ -44,7 +41,6 @@ with lib; let
       fi
 
       # GUARD 2 (dest): never push onto a node that's ALSO running the VM.
-      # FAIL-SAFE: If unreachable, abort this VM but continue to others.
       if ! peer_vms=$(ssh -o ConnectTimeout=10 -o BatchMode=yes "root@$PEER" \
             "virsh list --state-running --name" 2>&1); then
         echo "ABORT: cannot verify peer state ($PEER unreachable) for $VM: $peer_vms"
@@ -100,7 +96,6 @@ with lib; let
       fi
 
       # Stage the peer for migration
-      # Note: This assumes the libvirt storage pool name identically matches the VM name.
       ssh "root@$PEER" "rm -f '$STUB' && \
         qemu-img create -f qcow2 -b '$BASE' -F qcow2 '$STUB' && \
         virsh pool-refresh '$VM' || true"
@@ -109,7 +104,6 @@ with lib; let
       echo
     done
 
-    # If any single VM failed, return a non-zero exit code so systemd logs it as a unit failure
     exit $OVERALL_STATUS
   '';
 in {
@@ -120,7 +114,13 @@ in {
       type = types.listOf types.str;
       default = [];
       description = "List of VMs to iterate through for the nightly backup and sync.";
-      example = ["pelican-wings" "nextcloud-vm"];
+    };
+
+    # NEW OPTION ADDED HERE
+    peerIp = mkOption {
+      type = types.str;
+      description = "The target IP address of the peer node to sync backups to.";
+      example = "192.168.1.100";
     };
 
     calendar = mkOption {
@@ -133,17 +133,13 @@ in {
   config = mkIf cfg.enable {
     systemd.services.qemu-incremental-backup-nightly = {
       description = "Nightly QEMU Base Sync to Peer Node";
-
-      # Implicitly sets up the PATH so the script doesn't fail on missing commands
       path = with pkgs; [
         libvirt
         openssh
         gawk
         gnugrep
-        util-linux # Provides flock
-        net-tools # Provides hostname
+        util-linux
       ];
-
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${backupScript}/bin/qemu-incremental-backup";
@@ -156,7 +152,7 @@ in {
       wantedBy = ["timers.target"];
       timerConfig = {
         OnCalendar = cfg.calendar;
-        Persistent = true; # Catches up if the node was off at the scheduled time
+        Persistent = true;
       };
     };
   };

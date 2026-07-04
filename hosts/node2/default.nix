@@ -4,7 +4,7 @@
   lib,
   ...
 }: {
-  imports = [../../modules/common.nix ./hardware.nix ../../modules/qemu-incremental-backup-nightly.nix ./qemu-live-migrate.nix];
+  imports = [../../modules/common.nix ./hardware.nix ../../modules/qemu-incremental-backup-nightly.nix ../../modules/qemu-live-migrate.nix];
   boot.loader.grub = {
     enable = true;
     device = "/dev/sda";
@@ -23,7 +23,7 @@
   ## Drive Share/nvme
   services.qemu-incremental-backup-nightly = {
     enable = true;
-
+    peerIp = "192.168.1.100";
     # List the VMs hosted on THIS specific node that need backing up
     vms = [
       "pelican-wings"
@@ -38,6 +38,7 @@
   programs.qemu-live-migrate = {
     enable = true;
     defaultUser = "deathraymind";
+    defaultIp = "192.168.1.100";
   };
   fileSystems."/var/lib/libvirt/images" = {
     device = "vmpool/images";

@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: {
-  imports = [../../modules/common.nix ./hardware.nix ../../modules/qemu-incremental-backup-nightly.nix ./qemu-live-migrate.nix];
+  imports = [../../modules/common.nix ./hardware.nix ../../modules/qemu-incremental-backup-nightly.nix ../../modules/qemu-live-migrate.nix];
   boot.loader.grub = {
     enable = true;
     device = "/dev/disk/by-id/ata-Samsung_SSD_840_Series_S19HNSAD511826K";
@@ -22,10 +22,11 @@
   programs.qemu-live-migrate = {
     enable = true;
     defaultUser = "deathraymind";
+    defaultIp = "192.168.1.99";
   };
   services.qemu-incremental-backup-nightly = {
     enable = true;
-
+    peerIp = "192.168.1.99";
     # List the VMs hosted on THIS specific node that need backing up
     vms = [
       "pelican-wings"

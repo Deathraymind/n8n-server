@@ -7,35 +7,37 @@
 with lib; let
   cfg = config.programs.qemu-live-migrate;
 
-  # writeShellApplication is a newer, safer Nix tool than writeShellScriptBin
-  # It automatically runs ShellCheck on your code during the build.
   migrateScript = pkgs.writeShellApplication {
     name = "qemu-live-migrate";
 
-    # Implicitly sets up the PATH so the script has access to these commands
     runtimeInputs = with pkgs; [libvirt openssh];
 
     text = ''
-      # Set default user from the Nix configuration
+      # Set defaults from the Nix configuration
       TARGET_USER="${cfg.defaultUser}"
-      TARGET_IP=""
+
+      # If Nix provides a default IP, inject it here. Otherwise, leave it blank.
+      TARGET_IP="${
+        if cfg.defaultIp != null
+        then cfg.defaultIp
+        else ""
+      }"
 
       # Parse optional flags: -u for user, -i for IP, -h for help
       while getopts "u:i:h" opt; do
         case $opt in
           u) TARGET_USER="$OPTARG" ;;
-          i) TARGET_IP="$OPTARG" ;;
+          i) TARGET_IP="$OPTARG" ;; # This overrides the Nix default
           h)
             echo "Usage: qemu-live-migrate [-u user] [-i target_ip] vm1 [vm2 ...]"
             echo "  -u  SSH user for target host (default: ${cfg.defaultUser})"
-            echo "  -i  Target host IP (default: auto-detected based on cluster node)"
+            echo "  -i  Target host IP (configured default: ''${TARGET_IP:-auto-detect})"
             exit 0
             ;;
           \?) echo "Invalid option. Use -h for help."; exit 1 ;;
         esac
       done
 
-      # Shift the parsed flags out of the way. What remains are the VM names.
       shift $((OPTIND -1))
       VMS=("$@")
 
@@ -45,24 +47,21 @@ with lib; let
         exit 1
       fi
 
-      # Auto-detect IP if not provided (assumes node1/node2 cluster)
+      # Auto-detect IP if no -i flag was passed AND no Nix default was configured
       if [ -z "$TARGET_IP" ]; then
         case "$(hostname)" in
           node1) TARGET_IP="192.168.1.100" ;;
           node2) TARGET_IP="192.168.1.99" ;;
-          *) echo "Error: Unknown host and no target IP (-i) provided."; exit 1 ;;
+          *) echo "Error: Unknown host and no target IP provided via config or -i flag."; exit 1 ;;
         esac
       fi
 
-      # Loop through the remaining arguments (the VMs)
       for VM in "''${VMS[@]}"; do
         echo "=================================================="
         echo "Starting live migration for: $VM"
         echo "Target: qemu+ssh://$TARGET_USER@$TARGET_IP/system"
         echo "=================================================="
 
-        # We use 'sudo' here because virsh often requires root, but if your
-        # user is in the libvirt group, you can remove sudo.
         sudo virsh migrate --live --copy-storage-inc --persistent --verbose --auto-converge \
           "$VM" \
           "qemu+ssh://$TARGET_USER@$TARGET_IP/system" \
@@ -81,6 +80,13 @@ in {
       type = types.str;
       default = "root";
       description = "Default SSH user used for live migration. Can be overridden with -u flag.";
+    };
+
+    defaultIp = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Default target IP for live migration. If unset, the script will attempt to auto-detect based on node name.";
+      example = "192.168.1.100";
     };
   };
 
