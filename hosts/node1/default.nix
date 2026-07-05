@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: {
-  imports = [../../modules/common.nix ./hardware.nix ../../modules/qemu-incremental-backup-nightly.nix ../../modules/qemu-live-migrate.nix];
+  imports = [../../modules/common.nix ./hardware.nix ../../modules/qemu-incremental-backup-nightly.nix ../../modules/qemu-live-migrate.nix ../../qemu.qemu-shutdown-migration.nix];
   boot.loader.grub = {
     enable = true;
     device = "/dev/disk/by-id/ata-Samsung_SSD_840_Series_S19HNSAD511826K";
@@ -22,11 +22,22 @@
   programs.qemu-live-migrate = {
     enable = true;
     defaultUser = "deathraymind";
-    defaultIp = "192.168.1.99";
+    defaultIp = "10.0.0.2";
+  };
+  networking.interfaces.enp12s0 = {
+    ipv4.addresses = [
+      {
+        address = "10.0.0.1";
+        prefixLength = 24;
+      }
+    ];
+    useDHCP = false;
   };
   services.qemu-incremental-backup-nightly = {
     enable = true;
-    peerIp = "192.168.1.99";
+    peerIps = [
+      "10.0.0.2"
+    ];
     # List the VMs hosted on THIS specific node that need backing up
     vms = [
       "pelican-wings"
@@ -37,6 +48,11 @@
 
     # Optional: Override the default 3:00 AM run time if you want
     calendar = "*-*-* 04:30:00";
+  };
+  services.qemu-evacuate-on-shutdown = {
+    enable = true;
+    vms = ["pelican-wings" "caddy" "pelican"];
+    targetIp = "10.0.0.2"; # the *other* node, per-host
   };
   # Disable DHCP on eno1 since br0 takes over
 
@@ -99,19 +115,6 @@
       weekly = 4; # keep 4 weekly
       monthly = 0;
       yearly = 0;
-    };
-  };
-
-  # ---- Replication (push node1's VMs to node2 as backup) ----
-  services.syncoid = {
-    enable = true;
-    interval = "hourly";
-    sshKey = "/var/lib/syncoid/.ssh/id_syncoid";
-    commonArgs = ["--no-sync-snap"]; # use sanoid's snapshots, don't make extra ones
-    commands."vmpool/images" = {
-      source = "vmpool/images";
-      target = "syncoid@192.168.1.99:vmpool/backup/node1/images";
-      recursive = true; # ships all child datasets (caddy, pelican, etc.)
     };
   };
 }

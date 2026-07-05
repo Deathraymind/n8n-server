@@ -62,7 +62,7 @@ with lib; let
         echo "Target: qemu+ssh://$TARGET_USER@$TARGET_IP/system"
         echo "=================================================="
 
-        sudo virsh migrate --live --copy-storage-inc --persistent --verbose --auto-converge \
+        sudo virsh migrate --live --undefinesource --copy-storage-inc --persistent --verbose --auto-converge \
           "$VM" \
           "qemu+ssh://$TARGET_USER@$TARGET_IP/system" \
           --migrateuri "tcp://$TARGET_IP"

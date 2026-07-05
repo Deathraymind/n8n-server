@@ -4,7 +4,7 @@
   lib,
   ...
 }: {
-  imports = [../../modules/common.nix ./hardware.nix ../../modules/qemu-incremental-backup-nightly.nix ../../modules/qemu-live-migrate.nix];
+  imports = [../../modules/common.nix ./hardware.nix ../../modules/qemu-incremental-backup-nightly.nix ../../modules/qemu-live-migrate.nix ../../qemu.qemu-shutdown-migration.nix];
   boot.loader.grub = {
     enable = true;
     device = "/dev/sda";
@@ -20,10 +20,21 @@
   ];
   networking.defaultGateway = "192.168.1.1";
   networking.nameservers = ["1.1.1.1" "8.8.8.8"];
+  networking.interfaces.ens2 = {
+    ipv4.addresses = [
+      {
+        address = "10.0.0.2";
+        prefixLength = 24;
+      }
+    ];
+    useDHCP = false;
+  };
   ## Drive Share/nvme
   services.qemu-incremental-backup-nightly = {
     enable = true;
-    peerIp = "192.168.1.100";
+    peerIps = [
+      "10.0.0.1"
+    ];
     # List the VMs hosted on THIS specific node that need backing up
     vms = [
       "pelican-wings"
@@ -38,11 +49,12 @@
   programs.qemu-live-migrate = {
     enable = true;
     defaultUser = "deathraymind";
-    defaultIp = "192.168.1.100";
+    defaultIp = "10.0.0.1";
   };
-  fileSystems."/var/lib/libvirt/images" = {
-    device = "vmpool/images";
-    fsType = "zfs";
+  services.qemu-evacuate-on-shutdown = {
+    enable = true;
+    vms = ["pelican-wings" "caddy" "pelican"];
+    targetIp = "10.0.0.1"; # the *other* node, per-host
   };
 
   networking.hostId = "73a55545";
@@ -83,19 +95,17 @@
   ];
   system.stateVersion = "25.05";
 
-  # Syncoid
-  # node2 config
-  services.syncoid.enable = true; # creates the syncoid user
-
-  users.users.syncoid = {
-    isSystemUser = true;
-    group = "syncoid";
-    home = "/var/lib/syncoid";
-    createHome = lib.mkDefault true;
-    shell = pkgs.bashInteractive; # needs a real shell for zfs recv over ssh
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP03e7L0xaM3o3kV8ygPmoOKdzVjjjxzfZ+UtIz8tuA2 syncoid@node1" # ← the pubkey from step 1
-    ];
+  services.sanoid = {
+    enable = true;
+    datasets."vmpool/images" = {
+      recursive = true;
+      autosnap = true;
+      autoprune = true;
+      hourly = 24;
+      daily = 7;
+      weekly = 4;
+      monthly = 0;
+      yearly = 0;
+    };
   };
-  users.groups.syncoid = {};
 }

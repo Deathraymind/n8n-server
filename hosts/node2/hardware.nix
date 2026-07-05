@@ -20,7 +20,10 @@
     device = "/dev/disk/by-uuid/4eee01d9-c44e-45aa-8f1d-86fb8da4cea5";
     fsType = "ext4";
   };
-
+  fileSystems."/var/lib/libvirt/images" = {
+    device = "vmpool/images";
+    fsType = "zfs";
+  };
   swapDevices = [];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
