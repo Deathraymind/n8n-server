@@ -7,7 +7,7 @@
   networking.interfaces.enp1s0 = {
     ipv4.addresses = [
       {
-        address = "192.168.1.11";
+        address = "10.0.0.200";
         prefixLength = 24;
       }
     ];
@@ -18,7 +18,7 @@
 
   networking = {
     firewall.allowedTCPPorts = [8080 2022];
-    defaultGateway = "192.168.1.1";
+    defaultGateway = "10.0.0.1";
     hostName = "pelican-sylvath-wings";
     nameservers = ["1.1.1.1" "8.8.8.8"];
     networkmanager.enable = true;
