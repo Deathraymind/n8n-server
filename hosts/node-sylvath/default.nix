@@ -9,7 +9,6 @@
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
   homelab.node = {
     lanAddress = "10.0.0.8";
     bridgeInterface = "enp2s0";

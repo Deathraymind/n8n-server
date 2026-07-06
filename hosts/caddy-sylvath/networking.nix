@@ -7,7 +7,7 @@
   networking.interfaces.enp1s0 = {
     ipv4.addresses = [
       {
-        address = "192.168.1.9";
+        address = "10.0.0.5";
         prefixLength = 24;
       }
     ];
@@ -19,7 +19,7 @@
   time.timeZone = "Europe/Berlin";
   networking = {
     firewall.allowedTCPPorts = [8080 2022];
-    defaultGateway = "192.168.1.1";
+    defaultGateway = "10.0.0.1";
     hostName = "caddy";
     nameservers = ["1.1.1.1" "8.8.8.8"];
     networkmanager.enable = true;
