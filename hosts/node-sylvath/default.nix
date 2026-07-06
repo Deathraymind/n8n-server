@@ -11,7 +11,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   homelab.node = {
-    lanAddress = "192.168.1.30";
+    lanAddress = "10.0.0.8";
     bridgeInterface = "enp2s0";
     tengigAddress = "10.0.0.1";
     tengigMac = "80:3f:5d:d3:ae:76";
