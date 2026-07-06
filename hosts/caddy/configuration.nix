@@ -23,6 +23,10 @@
     owner = "acme";
     mode = "0400";
   };
+  sops.secrets."pelican/cloudflareddns" = {
+    owner = "acme";
+    mode = "0400";
+  };
   services.postgresql = {
     enable = true;
     enableTCPIP = true;
@@ -40,14 +44,12 @@
   };
   services.cloudflare-dyndns = {
     enable = true;
-
-    # Domains or subdomains you want to keep updated with your public IP
-    domains = [
-      "deathraymind.net"
-    ];
-
-    # Points to your existing secret file that contains CLOUDFLARE_API_TOKEN
-    apiTokenFile = config.sops.secrets."pelican/cloudflare".path;
+    domains = ["deathraymind.net"];
+    proxied = false; # set true if you want the orange cloud
+    ipv4 = true;
+    ipv6 = false; # enable if your ISP gives you a stable v6 prefix
+    frequency = "*:0/5"; # every 5 min; default is fine, this just makes it explicit
+    apiTokenFile = config.sops.secrets."pelican/cloudflareddns".path;
   };
 
   # Install agenix CLI
