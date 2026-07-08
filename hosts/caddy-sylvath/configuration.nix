@@ -65,7 +65,7 @@
     certs."deathraymind.net" = {
       group = "caddy";
       domain = "deathraymind.net";
-      extraDomainNames = ["*.deathraymind.net"];
+      extraDomainNames = ["*.deathraymind.net" "*.sylvath.deathraymind.net"];
       dnsProvider = "cloudflare";
       environmentFile = config.sops.secrets."pelican/cloudflare".path;
     };
@@ -74,7 +74,7 @@
     enable = true;
 
     virtualHosts."wings.sylvath.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.11:8080
+      reverse_proxy http://10.0.0.200:8080
       tls /var/lib/acme/deathraymind.net/fullchain.pem /var/lib/acme/deathraymind.net/key.pem {
         protocols tls1.3
       }

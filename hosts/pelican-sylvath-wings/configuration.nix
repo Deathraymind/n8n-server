@@ -70,7 +70,7 @@
   services.pelican.wings = {
     enable = true;
     openFirewall = true;
-    uuid = "xxxx-de51-41fa-baa1-c12cb92e2bf0";
+    uuid = "3d0776eb-4209-4135-bc8f-9c31578afb12";
     remote = "https://panel.deathraymind.net";
     tokenIdFile = config.sops.secrets."pelican/sylvathTokenIdFile".path;
     tokenFile = config.sops.secrets."pelican/sylvathTokenFile".path;
