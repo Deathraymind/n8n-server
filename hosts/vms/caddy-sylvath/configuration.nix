@@ -16,7 +16,7 @@
       ];
     };
   };
-  sops.defaultSopsFile = ../../secrets/pelican.yaml;
+  sops.defaultSopsFile = ../../../secrets/pelican.yaml;
   sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
   sops.secrets."pelican/cloudflare" = {
@@ -27,6 +27,7 @@
     owner = "acme";
     mode = "0400";
   };
+
   services.postgresql = {
     enable = true;
     enableTCPIP = true;
@@ -44,7 +45,7 @@
   };
   services.cloudflare-dyndns = {
     enable = true;
-    domains = ["deathraymind.net"];
+    domains = ["sylvath.deathraymind.net"];
     proxied = false; # set true if you want the orange cloud
     ipv4 = true;
     ipv6 = false; # enable if your ISP gives you a stable v6 prefix
@@ -64,7 +65,7 @@
     certs."deathraymind.net" = {
       group = "caddy";
       domain = "deathraymind.net";
-      extraDomainNames = ["*.deathraymind.net"];
+      extraDomainNames = ["*.deathraymind.net" "*.sylvath.deathraymind.net"];
       dnsProvider = "cloudflare";
       environmentFile = config.sops.secrets."pelican/cloudflare".path;
     };
@@ -72,38 +73,8 @@
   services.caddy = {
     enable = true;
 
-    virtualHosts."n8n.deathraymind.net" = {
-      useACMEHost = "deathraymind.net"; # This automatically configures permissions and links the certs!
-      extraConfig = ''
-        reverse_proxy http://192.168.1.203:5678
-      '';
-    };
-
-    virtualHosts."nextcloud.deathraymind.net" = {
-      useACMEHost = "deathraymind.net";
-      extraConfig = ''
-        reverse_proxy http://192.168.1.52
-      '';
-    };
-
-    virtualHosts."vaultwarden.deathraymind.net" = {
-      useACMEHost = "deathraymind.net";
-      extraConfig = ''
-        # Point Caddy directly to your Nix-Nas IP and Vaultwarden port
-        reverse_proxy http://192.168.1.52:8443
-
-        # Tell Caddy to use the certificate files managed by your NixOS ACME configuration
-      '';
-    };
-    virtualHosts."panel.deathraymind.net" = {
-      useACMEHost = "deathraymind.net";
-      extraConfig = ''
-        reverse_proxy http://192.168.1.50:80
-      '';
-    };
-
-    virtualHosts."node1.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.51:8080
+    virtualHosts."wings.sylvath.deathraymind.net".extraConfig = ''
+      reverse_proxy http://10.0.0.200:8080
       tls /var/lib/acme/deathraymind.net/fullchain.pem /var/lib/acme/deathraymind.net/key.pem {
         protocols tls1.3
       }

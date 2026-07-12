@@ -1,6 +1,6 @@
 {lib, ...}: {
   imports = [
-    ../../modules/qemu-node.nix
+    ../../../modules/ishikori/qemu-node.nix
     ./hardware.nix
   ];
 

@@ -1,6 +1,6 @@
 {...}: {
   imports = [
-    ../../modules/qemu-node.nix
+    ../../../modules/ishikori/qemu-node.nix
     ./hardware.nix
   ];
 
@@ -23,16 +23,32 @@
   ############################################################
   ## node1-only: NFS export of tank/data
   ############################################################
+
+  boot.kernelParams = [
+    "intel_iommu=on"
+    "iommu=pt"
+    "vfio-pci.ids=10de:1f82,10de:10fa"
+  ];
+
+  # bind in initrd so nouveau never touches it
+  boot.initrd.kernelModules = ["vfio_pci" "vfio" "vfio_iommu_type1"];
+
+  boot.blacklistedKernelModules = ["nouveau"];
+
+  boot.zfs.extraPools = ["tank"];
+
+  # the 3TB raidz2 share — nothing to do with VM storage
+  fileSystems."/srv/share" = {
+    device = "tank/data";
+    fsType = "zfs";
+    options = ["nofail"];
+  };
+
+  services.zfs.autoScrub.enable = true;
   services.nfs.server = {
     enable = true;
     exports = ''
-      /export/data 192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash)
+      /srv/share 192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash)
     '';
-  };
-
-  fileSystems."/export/data" = {
-    device = "/data";
-    options = ["bind"];
-    fsType = "ext4";
   };
 }

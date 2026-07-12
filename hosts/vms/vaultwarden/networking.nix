@@ -7,7 +7,7 @@
   networking.interfaces.enp1s0 = {
     ipv4.addresses = [
       {
-        address = "192.168.1.52";
+        address = "192.168.1.53";
         prefixLength = 24;
       }
     ];

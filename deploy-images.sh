@@ -46,7 +46,7 @@ VM_NET="${VM_NET:-br0}"
 read -rp "OS variant [linux2022]: " OS_VARIANT
 OS_VARIANT="${OS_VARIANT:-linux2022}"
 
-IMAGES_DIR="/var/lib/libvirt/images"
+IMAGES_DIR="/home/deathraymind"
 WORKDIR="$(mktemp -d)"
 QCOW2_LOCAL="${WORKDIR}/${VM_NAME}.qcow2"
 
@@ -111,16 +111,20 @@ scp "$QCOW2_LOCAL" "${NODE_TARGET}:${IMAGES_DIR}/${VM_NAME}.qcow2"
 
 # --- Create the VM on the node --------------------------------------------
 echo "==> Creating VM '${VM_NAME}' on ${NODE_TARGET}"
-ssh -t "$NODE_TARGET" \
-  "sudo virt-install \
+
+ssh -t "$NODE_TARGET" "
+  sudo mkdir -p '${IMAGES_DIR}/${VM_NAME}' &&
+  sudo mv '${VM_NAME}.qcow2' '${IMAGES_DIR}/${VM_NAME}/${VM_NAME}.qcow2' &&
+  sudo virt-install \
     --name '${VM_NAME}' \
     --memory '${VM_MEMORY}' \
     --vcpus '${VM_VCPUS}' \
-    --disk '${IMAGES_DIR}/${VM_NAME}.qcow2' \
+    --disk '${IMAGES_DIR}/${VM_NAME}/${VM_NAME}.qcow2' \
     --import \
     --os-variant '${OS_VARIANT}' \
     --network bridge='${VM_NET}' \
-    --noautoconsole"
+    --noautoconsole
+"
 
 echo
 echo "Done. VM '${VM_NAME}' should now be defined on ${NODE_TARGET}."

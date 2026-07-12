@@ -65,7 +65,7 @@ in {
 
     vms = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = ["pelican-wings" "caddy" "pelican"];
+      default = ["pelican-wings" "caddy" "pelican" "vaultwarden"];
       description = ''
         VMs this node is responsible for backing up / evacuating.
         Currently identical cluster-wide because replication is a

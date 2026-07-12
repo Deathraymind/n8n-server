@@ -17,6 +17,7 @@ with lib; let
     OVERLAY_NAME="daily"
     DISK="vda"
     PARENT="${cfg.datasetParent}"
+    XMLBAK="/var/lib/libvirt/onboard-xml"
 
     # Global lock prevents cron overlaps if a sync takes longer than 24h
     exec 9>/tmp/pelican-daily.lock
@@ -47,13 +48,74 @@ with lib; let
         continue
       fi
 
-      # GUARD 2: the VM runs here, so its dataset MUST exist.
-      # If this fires, a live VM is outside the replication scheme.
-      if ! zfs list -H -o name "$DATASET" >/dev/null 2>&1; then
-        echo "ABORT: $VM is running here but ZFS dataset $DATASET does not exist."
-        echo "       Restructure it into its own child dataset first."
+      # Detect the active disk FIRST: the onboarding decision is based on
+      # where the disk actually lives, not just whether the dataset exists.
+      src=$(virsh domblklist "$VM" | awk -v d="$DISK" '$1==d {print $2}')
+      if [ -z "$src" ]; then
+        echo "ABORT: could not determine active disk for $DISK on $VM"
         OVERALL_STATUS=1
         continue
+      fi
+
+      # GUARD 2 / ONBOARDING: the VM runs here, so its disk SHOULD live
+      # inside $IMGDIR (the per-VM dataset mountpoint). If it doesn't --
+      # whether the dataset is missing entirely (brand-new VM) or exists but
+      # the disk was never moved into it -- onboard it: create the dataset
+      # if needed, live-copy the disk into it (blockcopy flattens any chain
+      # into a single base image), then fall through to the normal
+      # commit/split flow below, which sees a flat disk and splits it.
+      case "$src" in
+        "$IMGDIR"/*) IN_DATASET=1 ;;
+        *)           IN_DATASET=0 ;;
+      esac
+
+      if [ "$IN_DATASET" -eq 0 ]; then
+        echo "Disk for $VM is at $src (outside $IMGDIR); onboarding..."
+
+        if ! zfs list -H -o name "$DATASET" >/dev/null 2>&1; then
+          # If the target directory already holds files (e.g. a plain dir on
+          # the parent dataset), move it aside so the dataset can mount there
+          # cleanly. The rename does not disturb the running guest: qemu
+          # holds an open fd.
+          if [ -e "$IMGDIR" ]; then
+            STASH="$IMGDIR.pre-zfs.$(date +%s)"
+            echo "Moving existing $IMGDIR aside to $STASH"
+            mv "$IMGDIR" "$STASH"
+          fi
+
+          if ! zfs create "$DATASET"; then
+            echo "ABORT: failed to create dataset $DATASET for $VM."
+            OVERALL_STATUS=1
+            continue
+          fi
+        fi
+
+        # Make sure the dataset is mounted where libvirt expects the disk.
+        mp=$(zfs get -H -o value mountpoint "$DATASET")
+        if [ "$mp" != "$IMGDIR" ]; then
+          zfs set mountpoint="$IMGDIR" "$DATASET"
+        fi
+        zfs mount "$DATASET" 2>/dev/null || true
+
+        # blockcopy only works on TRANSIENT domains, so: backup XML ->
+        # undefine (VM keeps running) -> blockcopy+pivot -> re-define.
+        # On success we re-define from the LIVE post-pivot XML so the
+        # persistent config points at the new disk path inside the dataset.
+        mkdir -p "$XMLBAK"
+        virsh dumpxml --inactive --security-info "$VM" > "$XMLBAK/$VM.xml"
+        virsh undefine "$VM"
+
+        if virsh blockcopy "$VM" "$DISK" --dest "$BASE" --format qcow2 --wait --pivot; then
+          virsh dumpxml --security-info "$VM" > "$XMLBAK/$VM.live.xml"
+          virsh define "$XMLBAK/$VM.live.xml"
+          echo "Onboarded $VM onto $DATASET (disk now at $BASE)."
+          echo "  NOTE: old image at $src (and any $IMGDIR.pre-zfs.* stash) can be deleted after verification."
+        else
+          echo "ERROR: blockcopy failed for $VM; restoring original definition and skipping."
+          virsh define "$XMLBAK/$VM.xml"
+          OVERALL_STATUS=1
+          continue
+        fi
       fi
 
       # GUARD 3 (dest): Loop through ALL peers to ensure safe state
@@ -172,6 +234,7 @@ in {
           gawk
           gnugrep
           util-linux
+          coreutils
           sanoid # provides the syncoid binary
           pv
           mbuffer

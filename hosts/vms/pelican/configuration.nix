@@ -28,7 +28,7 @@
   };
 
   # --- SOPS SECRETS ---
-  sops.defaultSopsFile = ../../secrets/pelican.yaml;
+  sops.defaultSopsFile = ../../../secrets/pelican.yaml;
   sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
   sops.secrets."pelican/app_key" = {

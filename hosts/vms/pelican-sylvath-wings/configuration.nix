@@ -25,14 +25,14 @@
   };
 
   # --- NETWORKING CONFIGURATION ---
-  sops.defaultSopsFile = ../../secrets/pelican.yaml;
+  sops.defaultSopsFile = ../../../secrets/pelican.yaml;
   sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
-  sops.secrets."pelican/tokenFile" = {
+  sops.secrets."pelican/sylvathTokenFile" = {
     owner = "pelican-wings";
     mode = "0400";
   };
-  sops.secrets."pelican/tokenIdFile" = {
+  sops.secrets."pelican/sylvathTokenIdFile" = {
     owner = "pelican-wings";
     mode = "0400";
   };
@@ -70,10 +70,10 @@
   services.pelican.wings = {
     enable = true;
     openFirewall = true;
-    uuid = "08b12380-dd90-4c19-8744-df6493a20121";
+    uuid = "3d0776eb-4209-4135-bc8f-9c31578afb12";
     remote = "https://panel.deathraymind.net";
-    tokenIdFile = config.sops.secrets."pelican/tokenIdFile".path;
-    tokenFile = config.sops.secrets."pelican/tokenFile".path;
+    tokenIdFile = config.sops.secrets."pelican/sylvathTokenIdFile".path;
+    tokenFile = config.sops.secrets."pelican/sylvathTokenFile".path;
     api.ssl.enable = false;
   };
 

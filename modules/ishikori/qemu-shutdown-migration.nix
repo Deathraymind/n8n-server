@@ -58,7 +58,7 @@ in {
       description = "Evacuate running VMs to peer before shutdown";
       restartIfChanged = false;
       wantedBy = ["multi-user.target"];
-      after = ["network.target" "libvirtd.service"];
+      after = ["network.target" "systemd-networkd.service" "libvirt-guests.service" "libvirtd.service"];
       requires = ["libvirtd.service"];
       path = with pkgs; [libvirt openssh iputils gnugrep];
       serviceConfig = {
