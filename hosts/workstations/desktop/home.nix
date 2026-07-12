@@ -11,7 +11,7 @@
   home.stateVersion = "25.11"; # Please read the comment before changing.
 
   imports = [
-    ../../modules/home-manager/default.nix
+    ../../../modules/erebos/home-manager/default.nix
   ];
   stylix.enable = true;
   ErebOS.homeNiri.enable = true;
