@@ -15,7 +15,7 @@
   };
 in {
   imports = [
-    ./common.nix
+    ../common/common.nix
     ./qemu-incremental-backup-nightly.nix
     ./qemu-live-migrate.nix
     ./qemu-shutdown-migration.nix
