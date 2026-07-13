@@ -50,6 +50,21 @@ in {
     };
 
     programs.niri = {
+      programs.niri.settings = {
+        animations = {
+          window-open = {
+            duration-ms = 500;
+            curve = "linear";
+            custom-shader = builtins.readFile ./niri-animations/honeycomb.kdl;
+          };
+
+          window-close = {
+            duration-ms = 400;
+            curve = "linear";
+            custom-shader = builtins.readFile ./niri-animiation/honeycomb.kdl;
+          };
+        };
+      };
       enable = true;
       package = pkgs.niri;
 
@@ -74,9 +89,9 @@ in {
               "-c"
               ''
                 ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri XDG_SESSION_DESKTOP=niri
-                  
+                              
                 systemctl --user stop xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk
-                  
+                              
                 systemctl --user start xdg-desktop-portal-gnome xdg-desktop-portal-gtk              ''
             ];
           }
