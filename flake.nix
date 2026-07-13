@@ -20,7 +20,6 @@
     };
     nvf = {
       url = "github:notashelf/nvf";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     herdr.url = "github:ogulcancelik/herdr";
     niri.url = "github:sodiboo/niri-flake";

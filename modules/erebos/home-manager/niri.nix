@@ -1,3 +1,4 @@
+# This is depricated dont use for now, DO NOT EDIT UNLESS TOLD
 {
   config,
   pkgs,
@@ -61,7 +62,7 @@ in {
               duration-ms = 500;
             };
             # Nix will read the contents of the file and insert it here
-            custom-shader = builtins.readFile ./niri-animations/honycomb-open.glsl;
+            custom-shader = builtins.readFile ./niri-animations/honeycomb-open.glsl;
           };
           window-close = {
             kind.easing = {
@@ -91,9 +92,9 @@ in {
               "-c"
               ''
                 ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri XDG_SESSION_DESKTOP=niri
-                              
+                  
                 systemctl --user stop xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk
-                              
+                  
                 systemctl --user start xdg-desktop-portal-gnome xdg-desktop-portal-gtk              ''
             ];
           }
