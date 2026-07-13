@@ -550,11 +550,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1783951015,
-        "narHash": "sha256-nruFo6EwG8DKZ1AIZpFmpVHxJ5YYWNA9VKH4g4n2kks=",
+        "lastModified": 1783954285,
+        "narHash": "sha256-pLcI7OCGF2D+282RU7rl66XBWEIjt2izDCeexn9cZLw=",
         "owner": "deathraymind",
         "repo": "nvf",
-        "rev": "fbf667c512892d785549bc40017baa2438469d95",
+        "rev": "fcd2629e0ca8ea069fc0ed85de78ab4d2cf08510",
         "type": "github"
       },
       "original": {

@@ -51,7 +51,7 @@ in {
 
     # 3. Main Stylix Configuration
     stylix = {
-      image = ../wallpapers/godhands.jpg;
+      # image = ../wallpapers/godhands.jpg;
       base16Scheme = themes.${cfg.theme};
       enable = true;
       polarity = "dark";

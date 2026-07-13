@@ -18,7 +18,10 @@
       url = "github:danth/stylix/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nvf-custom.url = "github:deathraymind/nvf";
+    nvf = {
+      url = "github:notashelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     herdr.url = "github:ogulcancelik/herdr";
     niri.url = "github:sodiboo/niri-flake";
     home-manager = {

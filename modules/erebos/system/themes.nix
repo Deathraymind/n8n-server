@@ -18,6 +18,24 @@
     base0E = "cba6f7";
     base0F = "f2cdcd";
   };
+  gruber-darker = {
+    base00 = "181818"; # bg
+    base01 = "282828"; # bg+1 (status bars, line highlight)
+    base02 = "453d41"; # bg+2 (selection)
+    base03 = "52494e"; # bg+4 (line numbers, invisibles)
+    base04 = "95a99f"; # quartz (dark fg, status text)
+    base05 = "e4e4ef"; # fg
+    base06 = "f4f4ff"; # fg+1
+    base07 = "f5f5f5"; # fg+2
+    base08 = "f43841"; # red (errors, variables)
+    base09 = "cc8c3c"; # brown (integers, constants)
+    base0A = "ffdd33"; # yellow (keywords, search)
+    base0B = "73c936"; # green (strings)
+    base0C = "95a99f"; # quartz (cyan slot, types)
+    base0D = "96a6c8"; # niagara (blue, functions)
+    base0E = "9e95c7"; # wisteria (magenta slot)
+    base0F = "c73c3f"; # red-1 (deprecated)
+  };
   gruvbox = {
     base00 = "161616"; # bg
     base01 = "3c3836";

@@ -13,5 +13,6 @@
     ./niri.nix
     ./noctalia.nix
     #    ./zellij.nix
+    ./nvf.nix
   ];
 }
