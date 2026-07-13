@@ -11,7 +11,7 @@
     ./cachy.nix
     ./autologin.nix
     ./ollama.nix
-    ./tmux.nix
+    # ./tmux.nix
     ./screenshot.nix
   ];
 }

@@ -19,6 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nvf-custom.url = "github:deathraymind/nvf";
+    herdr.url = "github:ogulcancelik/herdr";
     niri.url = "github:sodiboo/niri-flake";
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";

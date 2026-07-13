@@ -12,6 +12,6 @@
     ./applications/network.nix
     ./niri.nix
     ./noctalia.nix
-    ./zellij.nix
+    #    ./zellij.nix
   ];
 }
