@@ -23,7 +23,6 @@ in {
   services.ollama = {
     enable = true;
     package = ollama-fix;
-    acceleration = "rocm";
     rocmOverrideGfx = "10.3.1";
     host = "0.0.0.0"; # listen on all interfaces, not just loopback
     port = 11434;

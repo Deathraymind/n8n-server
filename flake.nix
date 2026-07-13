@@ -14,11 +14,14 @@
     };
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable"; # for cachy kernal
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    stylix.url = "github:danth/stylix";
+    stylix = {
+      url = "github:danth/stylix/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nvf-custom.url = "github:deathraymind/nvf";
     niri.url = "github:sodiboo/niri-flake";
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

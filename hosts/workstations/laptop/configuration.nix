@@ -25,7 +25,6 @@ in {
   services.udisks2.enable = true;
   services.gvfs.enable = true;
   # for ollamprograms.adb.enable = true;a
-  programs.adb.enable = true;
 
   systemd.services.NetworkManager-wait-online.enable = false;
 

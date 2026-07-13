@@ -13,5 +13,6 @@
     ./ollama.nix
     ./tmux.nix
     ./screenshot.nix
+    ./zellij.nix
   ];
 }

@@ -30,7 +30,6 @@ in {
 
   boot.supportedFilesystems = ["nfs"];
   # for ollamprograms.adb.enable = true;a
-  programs.adb.enable = true;
 
   systemd.services.NetworkManager-wait-online.enable = false;
   # Kill that xrdb error once and for all

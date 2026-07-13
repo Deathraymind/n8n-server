@@ -14,9 +14,8 @@ in {
   options.ErebOS.homeNoctalia = {
     enable = lib.mkEnableOption "ErebOS Noctalia Shell Configuration";
   };
-
   config = lib.mkIf cfg.enable {
-    programs.noctalia-shell = {
+    programs.noctalia = {
       enable = true;
       settings = {
         bar = {
