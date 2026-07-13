@@ -49,6 +49,7 @@
     pkgs.nodejs
     pkgs.vesktop
     pkgs.vscode
+    pkgs.mpvpaper
   ];
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [

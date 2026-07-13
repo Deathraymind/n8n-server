@@ -11,7 +11,7 @@ in {
     enable = lib.mkEnableOption "ErebOS stylix Configuration";
     theme = lib.mkOption {
       type = lib.types.str;
-      default = "catppuccin-mocha";
+      default = "gruvbox";
       description = "The name of the theme to use from themes.nix";
     };
   };

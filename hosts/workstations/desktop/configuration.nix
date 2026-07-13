@@ -114,7 +114,7 @@ in {
   ErebOS.steam.enable = true;
   ErebOS.stylix = {
     enable = true;
-    theme = "oxocarbon-dark";
+    theme = "gruvbox";
   };
 
   services.openssh.enable = true;

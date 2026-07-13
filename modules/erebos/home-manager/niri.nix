@@ -74,14 +74,14 @@ in {
               "-c"
               ''
                 ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri XDG_SESSION_DESKTOP=niri
-                    
+                              
                 systemctl --user stop xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk
-                    
+                              
                 systemctl --user start xdg-desktop-portal-gnome xdg-desktop-portal-gtk              ''
             ];
           }
           {command = ["${pkgs.swww}/bin/swww-daemon"];}
-          {command = ["noctalia-shell"];}
+          {command = ["noctalia"];}
           {
             command = [
               "${pkgs.swww}/bin/swww"
