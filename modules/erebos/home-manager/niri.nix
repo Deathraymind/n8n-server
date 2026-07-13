@@ -50,25 +50,27 @@ in {
     };
 
     programs.niri = {
-      programs.niri.settings = {
-        animations = {
-          window-open = {
-            duration-ms = 500;
-            curve = "linear";
-            custom-shader = builtins.readFile ./niri-animations/honeycomb.kdl;
-          };
-
-          window-close = {
-            duration-ms = 400;
-            curve = "linear";
-            custom-shader = builtins.readFile ./niri-animiation/honeycomb.kdl;
-          };
-        };
-      };
       enable = true;
       package = pkgs.niri;
 
       settings = {
+        animations = {
+          window-open = {
+            kind.easing = {
+              curve = "linear";
+              duration-ms = 500;
+            };
+            # Nix will read the contents of the file and insert it here
+            custom-shader = builtins.readFile ./niri-animations/honycomb-open.glsl;
+          };
+          window-close = {
+            kind.easing = {
+              curve = "linear";
+              duration-ms = 400;
+            };
+            custom-shader = builtins.readFile ./niri-animations/honeycomb-close.glsl;
+          };
+        };
         prefer-no-csd = false;
         spawn-at-startup = [
           {command = ["xwayland-satellite"];} # Add this line
