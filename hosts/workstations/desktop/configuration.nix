@@ -18,7 +18,6 @@ in {
   environment.systemPackages = [
     # This pulls the exact 'ErebOS' package you were running
     # and installs it as 'nvim' on your system path.
-    inputs.nvf-custom.packages.${pkgs.system}.default
     inputs.herdr.packages.${pkgs.system}.default
     pkgs.hyprpaper
     pkgs.hyprshot

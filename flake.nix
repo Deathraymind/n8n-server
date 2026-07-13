@@ -36,6 +36,7 @@
     chaotic,
     noctalia,
     nixpkgs-unstable,
+    nvf,
     ...
   } @ inputs: let
     # 1. Define the ROCm-specific unstable package here
