@@ -90,6 +90,19 @@
       ];
       specialArgs = {inherit inputs;};
     };
+    nixosConfigurations.grafana = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/vms/grafana/configuration.nix
+        ./hosts/vms/grafana/networking.nix
+        ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
+        ./modules/common/common.nix # Include our rewritten hardware file
+
+        inputs.sops-nix.nixosModules.sops
+        # This block instructs Nix to build a generic VHD image layout
+      ];
+      specialArgs = {inherit inputs;};
+    };
     nixosConfigurations.caddy-sylvath = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [

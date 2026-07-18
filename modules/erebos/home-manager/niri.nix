@@ -92,9 +92,9 @@ in {
               "-c"
               ''
                 ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri XDG_SESSION_DESKTOP=niri
-                  
+                            
                 systemctl --user stop xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk
-                  
+                            
                 systemctl --user start xdg-desktop-portal-gnome xdg-desktop-portal-gtk              ''
             ];
           }
@@ -222,7 +222,7 @@ in {
           "Mod+O".action.toggle-overview = [];
           "Mod+T".action.spawn = ["kitty"];
           "Mod+Q".action.close-window = [];
-          "Mod+A".action.spawn = ["rofi" "-show" "drun"];
+          "Mod+A".action.spawn = ["noctalia" "msg" "panel-toggle" "launcher"];
           "Mod+P".action.spawn = ["hypersnip"];
           "Mod+W".action.toggle-window-floating = [];
           "Mod+I".action.spawn = ["wl-color-picker"];

@@ -23,6 +23,11 @@
     enable = true;
     enableManpages = true;
     settings.vim = {
+      clipboard = {
+        enable = true;
+        registers = "unnamedplus";
+        providers.wl-copy.enable = true;
+      };
       viAlias = true;
       vimAlias = true;
 

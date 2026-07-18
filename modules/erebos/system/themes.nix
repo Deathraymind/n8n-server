@@ -18,6 +18,61 @@
     base0E = "cba6f7";
     base0F = "f2cdcd";
   };
+  black-metal-mayhem = {
+    base00 = "000000";
+    base01 = "121212";
+    base02 = "222222";
+    base03 = "333333";
+    base04 = "999999";
+    base05 = "c1c1c1";
+    base06 = "999999";
+    base07 = "c1c1c1";
+    base08 = "5f8787";
+    base09 = "aaaaaa";
+    base0A = "eecc6c";
+    base0B = "f3ecd4";
+    base0C = "aaaaaa";
+    base0D = "888888";
+    base0E = "999999";
+    base0F = "444444";
+  };
+  github-dark-high-contrast = {
+    base00 = "0a0c10";
+    base01 = "272b33";
+    base02 = "7a828e";
+    base03 = "9ea7b3";
+    base04 = "bdc4cc";
+    base05 = "f0f3f6";
+    base06 = "ffffff";
+    base07 = "ffffff";
+    base08 = "ffb757";
+    base09 = "91cbff";
+    base0A = "e09b13";
+    base0B = "addcff";
+    base0C = "72f088";
+    base0D = "dbb7ff";
+    base0E = "ff9492";
+    base0F = "ffb1af";
+  };
+
+  ayu-dark = {
+    base00 = "0b0e14";
+    base01 = "131721";
+    base02 = "202229";
+    base03 = "3e4b59";
+    base04 = "bfbdb6";
+    base05 = "e6e1cf";
+    base06 = "ece8db";
+    base07 = "f2f0e7";
+    base08 = "f07178";
+    base09 = "ff8f40";
+    base0A = "ffb454";
+    base0B = "aad94c";
+    base0C = "95e6cb";
+    base0D = "59c2ff";
+    base0E = "d2a6ff";
+    base0F = "e6b450";
+  };
   gruber-darker = {
     base00 = "181818"; # bg
     base01 = "282828"; # bg+1 (status bars, line highlight)
@@ -150,5 +205,23 @@
     base0D = "2959aa"; # Blue
     base0E = "5a3e8e"; # Magenta
     base0F = "343b58"; # Variables
+  };
+  synth-midnight-dark = {
+    base00 = "050608"; # Background
+    base01 = "1a1b1c"; # Darker Background
+    base02 = "28292a"; # Selection
+    base03 = "474849"; # Comments
+    base04 = "a3a5a6"; # Darker Foreground
+    base05 = "c1c3c4"; # Foreground
+    base06 = "cfd1d2"; # Light Foreground
+    base07 = "dddfe0"; # Very Light Foreground
+    base08 = "b53b50"; # Red
+    base09 = "ea770d"; # Orange
+    base0A = "c9d364"; # Yellow
+    base0B = "06ea61"; # Green
+    base0C = "42fff9"; # Cyan
+    base0D = "03aeff"; # Blue
+    base0E = "ea5ce2"; # Magenta
+    base0F = "cd6320"; # Variables
   };
 }

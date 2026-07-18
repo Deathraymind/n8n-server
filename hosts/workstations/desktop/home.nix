@@ -20,7 +20,7 @@
   ErebOS.git.enable = true;
   ErebOS.zsh.enable = true;
   ErebOS.kitty.enable = true;
-  ErebOS.rofi.enable = true;
+  ErebOS.rofi.enable = false;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
