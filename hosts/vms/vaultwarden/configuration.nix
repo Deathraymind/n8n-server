@@ -1,10 +1,11 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }: {
   imports = [];
-
+  virtualisation.diskSize = lib.mkForce 30480;
   # --- USER CONFIGURATION ---
   users.users.deathraymind = {
     isNormalUser = true;
@@ -15,7 +16,11 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII1p2OamHpIwYUh0mS3yj/CDmT01n4leoYCd/tuqMJHt deathraymind@gmail.com"
     ];
   };
-
+  services.esphome = {
+    enable = true;
+    address = "0.0.0.0";
+    openFirewall = true;
+  };
   # --- CONTAINERS CONFIGURATION ---
   virtualisation.docker.enable = true;
   virtualisation.oci-containers = {
@@ -55,17 +60,41 @@
         ];
         autoStart = true;
       };
+      homeassistant = {
+        image = "ghcr.io/home-assistant/home-assistant:stable";
+        volumes = [
+          "/var/lib/hass:/config"
+          "/run/dbus:/run/dbus:ro" # Bluetooth via host dbus
+          "/etc/localtime:/etc/localtime:ro"
+        ];
+        ports = [
+          "5353:5353/tcp"
+          "8123:8123/tcp" # Web UI Setup / Dashboard
+        ];
+
+        environment = {
+          TZ = "Asia/Tokyo";
+        };
+        extraOptions = [
+          "--network=host" # needed for mDNS/SSDP/DHCP device discovery
+          # "--device=/dev/ttyUSB0"  # uncomment if you have a Zigbee/Z-Wave stick
+        ];
+        autoStart = true;
+      };
     };
   };
 
   # --- SYSTEM NETWORKING & STORAGE ---
   networking.firewall = {
-    allowedTCPPorts = [53 3000 80 443 853];
-    allowedUDPPorts = [53];
+    allowedTCPPorts = [53 3000 80 443 853 8123];
+    allowedUDPPorts = [53 5353];
   };
 
   systemd.tmpfiles.rules = [
     "d /var/lib/adguardhome/work 0755 root root -"
     "d /var/lib/adguardhome/conf 0755 root root -"
+    "d /var/lib/adguardhome/work 0755 root root -"
+    "d /var/lib/adguardhome/conf 0755 root root -"
+    "d /var/lib/hass 0755 root root -"
   ];
 }

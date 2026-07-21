@@ -16,6 +16,12 @@
       ];
     };
   };
+  services.prometheus.exporters.snmp = {
+    enable = true;
+    listenAddress = "127.0.0.1"; # Change to 0.0.0.0 if querying remotely
+    port = 9116;
+    configurationPath = /path/to/your/snmp.yml;
+  };
 
   users.users.bowyn = {
     isNormalUser = true;

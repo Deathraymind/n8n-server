@@ -22,6 +22,7 @@ in {
       pkgs.prismlauncher
       pkgs.unityhub
       pkgs.protonup-qt
+      pkgs.limo
     ];
     nixpkgs.config.allowUnfreePredicate = pkg:
       builtins.elem (lib.getName pkg) [

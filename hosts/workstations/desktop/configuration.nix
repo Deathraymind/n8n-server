@@ -113,7 +113,7 @@ in {
   ErebOS.steam.enable = true;
   ErebOS.stylix = {
     enable = true;
-    theme = "synth-midnight-dark";
+    theme = "catppuccin-mocha";
   };
 
   services.openssh.enable = true;

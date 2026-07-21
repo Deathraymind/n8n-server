@@ -1,0 +1,112 @@
+nix-shell -p net-snmp
+snmpwalk -v3 -l authPriv -u ArubaSNMP -a SHA -A 'Qyfkr68984!' -x AES -X 'Qyfkr68984!' -Ont 192.168.1.20 1.3.6.1.4.1.14823.2.3.3.1.2.4 | head -40
+
+This oid shows devices and there are 
+snmpwalk -v3 -l authPriv -u ArubaSNMP -a SHA -A '...' -x AES -X '...' -Ont 192.168.1.20 1.3.6.1.4.1.14823.2.3.3.1.2.4 | head -40
+
+
+snmpwalk -v3 -l authPriv -u ArubaSNMP -a SHA -A 'Qyfkr68984!' -x AES -X 'Qyfkr68984!' 192.168.1.20 1.3.6.1.2.1.99
+
+
+snmpbulkwalk -v3 -l authPriv -u ArubaSNMP -a SHA -A 'Qyfkr68984!' -x AES -X 'Qyfkr68984!' 192.168.1.20 .1 > snmp_full_dump.txt
+
+
+
+sudo apt update
+sudo apt install snmp snmp-mibs-downloader
+
+curl --silent --location -O https://repos.influxdata.com/influxdata-archive.key
+gpg --show-keys --with-fingerprint --with-colons ./influxdata-archive.key 2>&1 \
+| grep -q '^fpr:\+24C975CBA61A024EE1B631787C3D57159FC2F927:$' \
+&& cat influxdata-archive.key \
+| gpg --dearmor \
+| sudo tee /etc/apt/keyrings/influxdata-archive.gpg > /dev/null \
+&& echo 'deb [signed-by=/etc/apt/keyrings/influxdata-archive.gpg] https://repos.influxdata.com/debian stable main' \
+| sudo tee /etc/apt/sources.list.d/influxdata.list
+sudo apt-get update && sudo apt-get install telegraf
+
+
+
+
+sudo nano /etc/telegraf/telegraf.conf
+
+[[inputs.snmp]]
+  agents = ["udp://192.168.1.20:161"]
+  timeout = "5s"
+  retries = 2
+
+  ## SNMPv3 Configuration
+  version = 3
+
+  ## Security Name (Username)
+  sec_name = "ArubaSNMP"
+
+  ## Security Level (noAuthNoPriv, authNoPriv, authPriv)
+  ## 'authPriv' provides both authentication and encryption (Highly Recommended)
+  sec_level = "authPriv"
+
+  ## Authentication Protocol (MD5 or SHA)
+  auth_protocol = "SHA"
+  ## Authentication Password
+  auth_password = "Qyfkr68984!"
+
+  ## Privacy (Encryption) Protocol (DES, AES)
+  priv_protocol = "AES"
+  ## Privacy Password
+  priv_password = "Qyfkr68984!"
+
+ [[inputs.snmp.table]]
+    name = "aruba_instant_clients"
+    # Base table OID
+    oid = ".1.3.6.1.4.1.14823.2.3.3.1.2.4"
+
+    # Suffix .1.1: Client MAC Address (Acts as a unique tag)
+    [[inputs.snmp.table.field]]
+      name = "client_mac"
+      oid = ".1.3.6.1.4.1.14823.2.3.3.1.2.4.1.1"
+      is_tag = true
+
+    # Suffix .1.3: Client IP Address
+    [[inputs.snmp.table.field]]
+      name = "client_ip"
+      oid = ".1.3.6.1.4.1.14823.2.3.3.1.2.4.1.3"
+
+    # Suffix .1.4: AP IP Address (The AP the client is linked to)
+    [[inputs.snmp.table.field]]
+      name = "connected_ap_ip"
+      oid = ".1.3.6.1.4.1.14823.2.3.3.1.2.4.1.4"
+
+    # Suffix .1.5: Client Device Name (e.g., iPhone, ErebOS)
+    [[inputs.snmp.table.field]]
+      name = "device_name"
+      oid = ".1.3.6.1.4.1.14823.2.3.3.1.2.4.1.5"
+
+
+curl --silent --location -O https://repos.influxdata.com/influxdata-archive.key
+
+gpg --show-keys --with-fingerprint --with-colons ./influxdata-archive.key 2>&1 \
+  | grep -q '^fpr:\+24C975CBA61A024EE1B631787C3D57159FC2F927:$' \
+  && cat influxdata-archive.key | gpg --dearmor \
+  | sudo tee /etc/apt/keyrings/influxdata-archive.gpg > /dev/null \
+  && echo 'deb [signed-by=/etc/apt/keyrings/influxdata-archive.gpg] https://repos.influxdata.com/debian stable main' \
+  | sudo tee /etc/apt/sources.list.d/influxdata.list
+
+sudo apt update && sudo apt install influxdb2
+
+
+sudo systemctl enable --now influxdb
+systemctl status influxdb
+
+influx setup
+
+grep token ~/.influxdbv2/configs
+
+
+sudo apt install -y apt-transport-https software-properties-common wget
+sudo mkdir -p /etc/apt/keyrings
+sudo wget -O /etc/apt/keyrings/grafana.asc https://apt.grafana.com/gpg-full.key
+sudo chmod 644 /etc/apt/keyrings/grafana.asc
+echo "deb [signed-by=/etc/apt/keyrings/grafana.asc] https://apt.grafana.com stable main" \
+  | sudo tee /etc/apt/sources.list.d/grafana.list
+sudo apt update && sudo apt install -y grafana
+sudo systemctl enable --now grafana-server

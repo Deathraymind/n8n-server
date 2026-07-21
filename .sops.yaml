@@ -1,11 +1,12 @@
 keys:
-  - &deathraymind age1psgzl6fsfu8397ezxuryzyutuw8vdzsehkemjxwqdajl4cf3fpksl3974a 
-  - &pelican_host age1gm6tu8xs9ktcv3rfs5mdn0jt9nz53vtaatppx74nee4h98tx5spq32ngy2 
-  - &caddy_host age18w9vcsfhpsh7ds6mn34ettdwwp7xsjuh8cm9kuce0gmpgdf9qv8s204p3n 
+  - &deathraymind age1psgzl6fsfu8397ezxuryzyutuw8vdzsehkemjxwqdajl4cf3fpksl3974a
+  - &pelican_host age1gm6tu8xs9ktcv3rfs5mdn0jt9nz53vtaatppx74nee4h98tx5spq32ngy2
+  - &caddy_host age18w9vcsfhpsh7ds6mn34ettdwwp7xsjuh8cm9kuce0gmpgdf9qv8s204p3n
   - &wings age1jpgjh3d4qh7psy66nnj702ua242age3x92ryf7s0lq00djuv3s3spceep4
   - &nas age1ty8wcgd3y2gu4v4uc0ulhd0qu52q45hyxgyerpq7wensga9fvfhsnehlq4
   - &caddy-sylvath age15hwvu99yd29al9perv6y26vumcyxrn9lphjmyxuxeprtzc8qncnsskcx60
   - &wings-sylvath age13a8qtwpggrxjlj7vsa3gta9eadlufnmgnkles0wz2h3hn4jan4fqha7vjh
+  - &monitoring age13a8qtwpggrxjlj7vsa3gta9eadlufnmgnkles0wz2h3hn4jan4fqha7vjh
 creation_rules:
   - path_regex: secrets/pelican\.yaml$
     key_groups:
@@ -17,3 +18,8 @@ creation_rules:
           - *nas
           - *caddy-sylvath
           - *wings-sylvath
+  - path_regex: secrets/monitoring\.yaml$
+    key_groups:
+      - age:
+          - *deathraymind
+          - *monitoring
