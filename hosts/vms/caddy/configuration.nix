@@ -95,6 +95,13 @@
         # Tell Caddy to use the certificate files managed by your NixOS ACME configuration
       '';
     };
+    virtualHosts."grafana.deathraymind.net" = {
+      useACMEHost = "deathraymind.net";
+      extraConfig = ''
+        reverse_proxy http://192.168.1.11:3000
+
+      '';
+    };
     virtualHosts."panel.deathraymind.net" = {
       useACMEHost = "deathraymind.net";
       extraConfig = ''

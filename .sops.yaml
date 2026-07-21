@@ -6,7 +6,7 @@ keys:
   - &nas age1ty8wcgd3y2gu4v4uc0ulhd0qu52q45hyxgyerpq7wensga9fvfhsnehlq4
   - &caddy-sylvath age15hwvu99yd29al9perv6y26vumcyxrn9lphjmyxuxeprtzc8qncnsskcx60
   - &wings-sylvath age13a8qtwpggrxjlj7vsa3gta9eadlufnmgnkles0wz2h3hn4jan4fqha7vjh
-  - &monitoring age13a8qtwpggrxjlj7vsa3gta9eadlufnmgnkles0wz2h3hn4jan4fqha7vjh
+  - &monitoring age16jpfz036h8kauyhe4hjq2fzm7ylqjyv8qzx8egsl0jwpzyvera4qk7hl9w
 creation_rules:
   - path_regex: secrets/pelican\.yaml$
     key_groups:

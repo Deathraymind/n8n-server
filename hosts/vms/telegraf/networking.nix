@@ -19,7 +19,7 @@
   networking = {
     firewall.allowedTCPPorts = [8080 2022];
     defaultGateway = "192.168.1.1";
-    hostName = "pelican-wings-1";
+    hostName = "telegraf";
     nameservers = ["1.1.1.1" "8.8.8.8"];
     networkmanager.enable = true;
     useDHCP = false;
