@@ -11,7 +11,6 @@
     ./cachy.nix
     ./autologin.nix
     ./ollama.nix
-    # ./tmux.nix
     ./screenshot.nix
     ./display-settings.nix
   ];

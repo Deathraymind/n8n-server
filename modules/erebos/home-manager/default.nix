@@ -5,7 +5,6 @@
     ./homeStylix.nix
     ./zsh.nix
     ./kitty.nix
-    ./rofi.nix
     ./applications/freecad.nix
     ./applications/pavucontrol.nix
     ./applications/blueman.nix

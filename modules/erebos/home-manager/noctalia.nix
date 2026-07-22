@@ -1,33 +1,3 @@
-# modules/erebos/home-manager/noctalia.nix
-#
-# ErebOS Noctalia (v5) + Stylix bridge.
-#
-# Noctalia v5 has no stylix target (stylix release-26.05 only targets the
-# frozen v4 `programs.noctalia-shell`), so this module wires the two together
-# directly:
-#
-#   stylix base16 scheme (config.lib.stylix.colors)
-#     -> noctalia custom palette JSON  (~/.config/noctalia/palettes/stylix.json)
-#     -> [theme] source = "custom", custom_palette = "stylix"
-#
-# The 16-role color mapping is ported from stylix's v4 noctalia-shell target
-# (modules/noctalia-shell/hm.nix @ e602ad04). Noctalia expands these 16 roles
-# into its full Material-3 token set itself (containers, fixed variants,
-# surface tiers) with WCAG contrast enforcement — see expandFixedPaletteMode()
-# in src/theme/fixed_palette.cpp — so we only supply the core roles plus the
-# terminal ANSI block (which base16 maps onto by construction).
-#
-# Palette JSON schema verified against noctalia main @ 2026-07-13:
-#   - parseCommunityPaletteJson() in src/theme/theme_service.cpp:
-#       * "dark" object REQUIRED, and its "terminal" object REQUIRED
-#       * "light" optional -> falls back to dark (base16 schemes are
-#         single-polarity, so we rely on that fallback deliberately)
-#   - color keys accept "mPrimary" (m-prefixed camelCase) or "primary";
-#     we use the m-prefixed form to match the community-palettes convention.
-#
-# Delete this module (or set followStylix = false) when stylix ships a
-# native v5 target. Check with:
-#   grep -rn "programs.noctalia\b" <stylix>/modules/
 {
   config,
   pkgs,
@@ -125,11 +95,6 @@ in {
   config = lib.mkIf cfg.enable {
     programs.noctalia = {
       enable = true;
-
-      # Ships as ~/.config/noctalia/palettes/stylix.json via the HM module.
-      # Only "dark" is emitted: the parser copies dark -> light when light
-      # is absent, which is the honest behavior for a single-polarity
-      # base16 scheme.
       customPalettes = lib.optionalAttrs stylixOn {
         stylix.dark = stylixPaletteMode;
       };
@@ -141,11 +106,9 @@ in {
         {
           # v5 bars are named tables: [bar.<name>]. "default" replaces the
           # old v4 `bar.position` setting (and "top" is also the v5 default).
-          bar.default.position = "top";
+          bar.default.position = "right";
         }
         // lib.optionalAttrs stylixOn {
-          # Follow the stylix font for the shell UI. Empty/absent falls
-          # back to sans-serif; key verified in shellSchema().
           shell.font_family = config.stylix.fonts.sansSerif.name;
 
           theme = {
