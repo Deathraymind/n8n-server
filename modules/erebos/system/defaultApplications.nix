@@ -6,7 +6,6 @@
   inputs,
   ...
 }: {
-  services.twingate.enable = true;
   # Enable libvirtd daemon
   virtualisation.libvirtd.enable = true;
   #  services.expressvpn.enable = true;

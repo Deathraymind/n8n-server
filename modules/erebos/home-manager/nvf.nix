@@ -35,10 +35,8 @@
       extraPackages = with pkgs; [
         lazygit
       ];
-
       # --- MAXED OUT LANGUAGE & LSP STACK ---
       languages = {
-        enableLSP = true;
         enableTreesitter = true;
         enableFormat = true;
         enableExtraDiagnostics = true;
@@ -47,7 +45,7 @@
         nix.enable = true;
         bash.enable = true;
         python.enable = true;
-        ts.enable = true;
+        typescript.enable = true;
         rust.enable = true;
         go.enable = true;
         lua.enable = true;
