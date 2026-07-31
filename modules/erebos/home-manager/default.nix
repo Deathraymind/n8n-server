@@ -14,5 +14,6 @@
     #    ./zellij.nix
     ./nvf.nix
     ./chromium.nix
+    ./qutebrowser
   ];
 }
