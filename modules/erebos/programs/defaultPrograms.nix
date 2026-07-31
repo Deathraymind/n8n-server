@@ -21,7 +21,4 @@ in {
     pkgs.python3
     pkgs.arduino-ide
   ];
-  imports = [
-    ./chromium.nix
-  ];
 }
