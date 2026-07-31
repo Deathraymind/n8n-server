@@ -26,7 +26,7 @@
     owner = "akkva";
     repo = "gwfox";
     rev = "072e6f2b023c6ea79bdd7ca89d7ad5aae070e964"; # main @ 2026-07-27
-    hash = lib.fakeHash;
+    hash = "sha256-G5gxsRE2QJKybSL7K/xhDP8H2Ko1yA93tm+aU3V3520=";
   };
   #
   # Option (a), recommended for a flake repo like erebos — no hash to babysit,
