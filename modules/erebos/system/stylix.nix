@@ -39,7 +39,7 @@ in {
     # 2. Home Manager configuration
     home-manager.users.deathraymind = {
       stylix.targets.kitty.enable = true;
-      stylix.targets.firefox.enable = true;
+      stylix.targets.firefox.enable = false;
       programs.kitty = {
         enable = true;
         # Force kitty to handle the fallback gracefully

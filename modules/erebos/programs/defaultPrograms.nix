@@ -2,18 +2,23 @@
   inputs,
   pkgs,
   ...
-}: {
-  environment.systemPackages = with pkgs; [
-    obsidian
-    git
-    firefox
-    kitty
-    xorg.xrdb
-    orca-slicer
-    gnome-disk-utility
-    nautilus
-    obs-studio
-    python3
-    arduino-ide
+}: let
+  unstable = import inputs.nixpkgs-unstable {
+    inherit (pkgs) system;
+    config.allowUnfree = true;
+  };
+in {
+  environment.systemPackages = [
+    unstable.firefox
+    pkgs.obsidian
+    pkgs.git
+    pkgs.kitty
+    pkgs.xorg.xrdb
+    pkgs.orca-slicer
+    pkgs.gnome-disk-utility
+    pkgs.nautilus
+    pkgs.obs-studio
+    pkgs.python3
+    pkgs.arduino-ide
   ];
 }
