@@ -23,10 +23,10 @@
   #   error: hash mismatch ... got: sha256-XXXX
   # Paste that value over lib.fakeHash and rebuild.
   gwfox = pkgs.fetchFromGitHub {
-    owner = "akkva";
-    repo = "gwfox";
-    rev = "072e6f2b023c6ea79bdd7ca89d7ad5aae070e964"; # main @ 2026-07-27
-    hash = "sha256-G5gxsRE2QJKybSL7K/xhDP8H2Ko1yA93tm+aU3V3520=";
+    owner = "Firnschnee";
+    repo = "FoxOne";
+    rev = "642616a6647017442167f0b6020465eb0144e862"; # main @ 2026-07-27
+    hash = "sha256-sI/HVHze3uz66HTupDC4lCE/Kwj0hMVKVRXNWDZWa58=";
   };
   #
   # Option (a), recommended for a flake repo like erebos — no hash to babysit,
@@ -39,39 +39,33 @@
   #   gwfox = inputs.gwfox;
 
   # ── Preferences ───────────────────────────────────────────────────────────
-  gwfoxSettings =
-    {
-      # Required by the theme (README "Installation").
-      "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-      "svg.context-properties.content.enabled" = true;
-      "browser.newtabpage.activity-stream.nova.enabled" = false;
+  gwfoxSettings = {
+    # Required by the theme (README "Installation").
+    "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+    "svg.context-properties.content.enabled" = true;
+    "browser.newtabpage.activity-stream.nova.enabled" = false;
 
-      # CJK/IME — README requires this for East Asian input. It's the Firefox Labs
-      # "Address Bar: show results during IME composition" toggle. Relevant to you;
-      # if a Firefox update renames the key, confirm via about:config modified prefs.
-      "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
+    # CJK/IME — README requires this for East Asian input. It's the Firefox Labs
+    # "Address Bar: show results during IME composition" toggle. Relevant to you;
+    # if a Firefox update renames the key, confirm via about:config modified prefs.
+    "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
 
-      # ── gwfox.* customization toggles (README "Customization") ───────────────
-      # These are opt-in UI tweaks the theme reads. Flip to taste.
-      "gwfox.icons" = true; # menu icons
-      "gwfox.blur" = true; # UI blur effects (disable if you see perf issues)
-      "gwfox.toolbar" = true; # auto-hide bookmarks toolbar
-      # "gwfox.urlbar"   = true;  # move address bar into the (expanded) sidebar
-      # "gwfox.atbc"     = true;  # Adaptive Tab Bar Colour compatibility
-      # "gwfox.newtab"   = true;  # New Tab transparency (needs allow_transparent_browser)
-      "gwfox.noborder" = true; # remove window borders
-      # "gwfox.bms"      = true;  # main-window transparency — Linux only, wants a compositor
-      # "gwfox.db"       = true;  # disable menu blur
-      # "gwfox.ac"       = true;  # accent color (edit --bg0 in userChrome.css)
-      "gwfox.sidebar" = 2; # sidebar width: 1 | 2 | 3
-    }
+    # ── gwfox.* customization toggles (README "Customization") ───────────────
+    # These are opt-in UI tweaks the theme reads. Flip to taste.
+    "gwfox.icons" = false; # menu icons
+    "gwfox.blur" = false; # UI blur effects (disable if you see perf issues)
+    "gwfox.toolbar" = true; # auto-hide bookmarks toolbar
+    # "gwfox.urlbar"   = true;  # move address bar into the (expanded) sidebar
+    # "gwfox.atbc"     = true;  # Adaptive Tab Bar Colour compatibility
+    # "gwfox.newtab"   = true;  # New Tab transparency (needs allow_transparent_browser)
+    "gwfox.noborder" = true; # remove window borders
+    # "gwfox.bms"      = true;  # main-window transparency — Linux only, wants a compositor
+    # "gwfox.db"       = true;  # disable menu blur
+    # "gwfox.ac"       = true;  # accent color (edit --bg0 in userChrome.css)
+    "gwfox.sidebar" = 1; # sidebar width: 1 | 2 | 3
     # ── Platform-conditional prefs ──────────────────────────────────────────────
-    // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-      "widget.gtk.rounded-bottom-corners.enabled" = true;
-    }
-    // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
-      "widget.macos.native-context-menus" = false;
-    };
+    "widget.gtk.rounded-bottom-corners.enabled" = true;
+  };
   # Windows (kept for reference; harmless no-ops elsewhere but scoped out on purpose):
   #   "widget.windows.mica"                   = true;
   #   "widget.windows.mica.toplevel-backdrop" = 2;

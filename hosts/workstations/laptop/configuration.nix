@@ -121,4 +121,5 @@ in {
 
   # 1. Enable dconf (Required for the GNOME portal to function)
   programs.dconf.enable = true;
+  home-manager.backupFileExtension = "backup";
 }

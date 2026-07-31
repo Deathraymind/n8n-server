@@ -13,6 +13,5 @@
     ./noctalia.nix
     #    ./zellij.nix
     ./nvf.nix
-    ./firefoxTheme.nix
   ];
 }
