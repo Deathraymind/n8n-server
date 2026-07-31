@@ -10,7 +10,7 @@
     ./defaultApplications.nix
     ./cachy.nix
     ./autologin.nix
-    ./ollama.nix
+    # ./ollama.nix
     ./screenshot.nix
     ./display-settings.nix
   ];

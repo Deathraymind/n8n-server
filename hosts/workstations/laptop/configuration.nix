@@ -95,9 +95,12 @@ in {
     ];
   };
   # Make sure amdgpu is available from early boot and in the live system
-  boot.initrd.kernelModules = ["amdgpu"];
-  boot.kernelModules = ["amdgpu"];
-
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [intel-media-driver];
+    package = inputs.nixpkgs.legacyPackages.x86_64-linux.mesa;
+    package32 = inputs.nixpkgs.legacyPackages.x86_64-linux.pkgsi686Linux.mesa;
+  };
   # You need access to /dev/kfd and /dev/dri/*
 
   ## Home Manager Import ##
