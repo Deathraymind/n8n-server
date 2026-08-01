@@ -19,6 +19,7 @@ in {
     ./qemu-incremental-backup-nightly.nix
     ./qemu-live-migrate.nix
     ./qemu-shutdown-migration.nix
+    ./qemu-live-export.nix
   ];
 
   options.homelab.node = {
