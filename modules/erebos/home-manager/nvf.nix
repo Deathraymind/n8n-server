@@ -85,6 +85,13 @@
       # Your Custom Keymaps
       keymaps = [
         {
+          key = "A";
+          mode = "n";
+          silent = true;
+          action = "ggVG";
+          desc = "Select all (whole file)";
+        }
+        {
           key = "<leader>e";
           mode = "n";
           silent = true;

@@ -21,7 +21,6 @@ in {
     ./qemu-shutdown-migration.nix
     ./qemu-live-export.nix
   ];
-
   options.homelab.node = {
     lanAddress = lib.mkOption {
       type = lib.types.str;
@@ -136,6 +135,7 @@ in {
       calendar = lib.mkDefault "*-*-* 04:30:00";
     };
 
+    programs.qemu-live-export.enable = true;
     programs.qemu-live-migrate = {
       enable = true;
       defaultUser = "deathraymind";
