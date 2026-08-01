@@ -20,6 +20,7 @@ in {
     ./qemu-live-migrate.nix
     ./qemu-shutdown-migration.nix
     ./qemu-live-export.nix
+    ./qemu-live-import.nix
   ];
   options.homelab.node = {
     lanAddress = lib.mkOption {
@@ -134,8 +135,13 @@ in {
       vms = cfg.vms;
       calendar = lib.mkDefault "*-*-* 04:30:00";
     };
-
-    programs.qemu-live-export.enable = true;
+    programs.qemu-live-export = {
+      enable = true;
+      compressor = "zstd";
+      zstdLevel = 3; # Much faster
+      zstdLong = ""; # Remove the massive CPU/RAM penalty
+    };
+    programs.qemu-live-import.enable = true;
     programs.qemu-live-migrate = {
       enable = true;
       defaultUser = "deathraymind";

@@ -48,7 +48,7 @@
   services.nfs.server = {
     enable = true;
     exports = ''
-      /srv/share 192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash)
+      /srv/share 192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash) 10.0.0.2(rw,sync,no_subtree_check,no_root_squash)
     '';
   };
 }

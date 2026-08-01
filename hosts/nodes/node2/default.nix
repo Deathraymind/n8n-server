@@ -21,7 +21,7 @@
   };
   fileSystems."/srv/share" = {
     # Replace with the actual IP of the other server and the path it exports
-    device = "192.168.1.100:/srv/share";
+    device = "10.0.0.1:/srv/share";
     fsType = "nfs";
 
     # These options are crucial: they mount the share "on demand"
