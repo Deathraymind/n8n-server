@@ -106,7 +106,7 @@ in {
     ############################################################
     ## ZFS
     ############################################################
-    environment.systemPackages = [pkgs.zfs];
+    environment.systemPackages = [pkgs.zfs pkgs.rclone];
     boot.supportedFilesystems = ["zfs"];
     boot.zfs.forceImportRoot = false;
     services.zfs.autoScrub.enable = true;
