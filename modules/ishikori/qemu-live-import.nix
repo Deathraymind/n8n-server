@@ -158,7 +158,10 @@ with lib; let
       case "$IMG" in
         *.qcow2.zst)
           echo "Decompressing zstd..."
-          zstd -d -f "$IMG" -o "$tmpout"
+          # --long=31 re-enables the long-range match window the exporter used.
+          # zstd caps the decode window at 128 MiB by default as an anti-DoS guard;
+          # without this it refuses frames built with --long (window > 128 MiB).
+          zstd -d --long=31 -f "$IMG" -o "$tmpout"
           ;;
         *.qcow2.xz)
           echo "Decompressing xz..."

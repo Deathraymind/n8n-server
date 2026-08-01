@@ -21,6 +21,7 @@ in {
     ./qemu-shutdown-migration.nix
     ./qemu-live-export.nix
     ./qemu-live-import.nix
+    ./vm-backup-push.nix
   ];
   options.homelab.node = {
     lanAddress = lib.mkOption {
@@ -135,6 +136,7 @@ in {
       vms = cfg.vms;
       calendar = lib.mkDefault "*-*-* 04:30:00";
     };
+    programs.vm-backup-push.enable = true;
     programs.qemu-live-export = {
       enable = true;
       compressor = "zstd";
