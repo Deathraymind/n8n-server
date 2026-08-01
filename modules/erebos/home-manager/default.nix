@@ -14,6 +14,7 @@
     #    ./zellij.nix
     ./nvf.nix
     ./chromium.nix
-    ./qutebrowser
+    ./qutebrowser.nix
+    ./firefoxTheme.nix
   ];
 }

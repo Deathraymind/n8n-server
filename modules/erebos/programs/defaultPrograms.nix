@@ -9,7 +9,6 @@
   };
 in {
   environment.systemPackages = [
-    unstable.firefox
     pkgs.obsidian
     pkgs.git
     pkgs.kitty
