@@ -138,6 +138,17 @@ in {
       calendar = lib.mkDefault "*-*-* 04:30:00";
     };
     programs.vm-backup-push.enable = true;
+    systemd.timers.vm-restic-backup = {
+      wantedBy = ["timers.target"];
+      timerConfig = {
+        OnCalendar = "Sun 04:00";
+        Persistent = true;
+      };
+    };
+    systemd.services.vm-restic-backup = {
+      serviceConfig.Type = "oneshot";
+      serviceConfig.ExecStart = "${config.programs.vm-restic-backup.package}/bin/vm-restic-backup";
+    };
     programs.qemu-live-export = {
       enable = true;
       compressor = "zstd";

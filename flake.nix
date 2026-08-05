@@ -90,6 +90,19 @@
       ];
       specialArgs = {inherit inputs;};
     };
+    nixosConfigurations.yattee = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/vms/yattee/configuration.nix
+        ./hosts/vms/yattee/networking.nix
+        ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
+        ./modules/common/common.nix # Include our rewritten hardware file
+
+        inputs.sops-nix.nixosModules.sops
+        # This block instructs Nix to build a generic VHD image layout
+      ];
+      specialArgs = {inherit inputs;};
+    };
     nixosConfigurations.telegraf = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [

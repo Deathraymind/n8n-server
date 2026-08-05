@@ -3,7 +3,11 @@
     ../../../modules/ishikori/qemu-node.nix
     ./hardware.nix
   ];
-
+  programs.vm-restic-backup = {
+    enable = true;
+    vms = ["caddy" "pelican" "pelican-wings" "vaultwarden"];
+    repository = "s3:https://ee25c8a9bd470793ee087dabb15f70fd.r2.cloudflarestorage.com/hypervisor-backups/restic";
+  };
   networking.hostName = "node1";
   networking.hostId = "4c27bb3b"; # must be unique per node (ZFS)
 
